@@ -1,5 +1,7 @@
 package ru.ssp.impl;
 
+import java.util.Optional;
+
 import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
 
@@ -31,8 +33,10 @@ public final class WordsFinder {
      *
      * @param findParam пераметры вызова
      * @return результаты вызова
-     * @exception WordsFinderConrurrentException в случае если вызов сделан
-     * в время работы предыдущего вызова
+     * @exception WordsFinderConcurrentException
+     *                                           в случае если вызов сделан
+     *                                           в время работы предыдущего
+     *                                           вызова
      */
     public static ResultDto find(final ParamDto findParam) {
         // TODO lock and check locking
@@ -41,12 +45,20 @@ public final class WordsFinder {
     }
 
     /**
-     * выполняет поиск.
+     * фасад.
      *
-     * @param findParam входные параметры для выполнения поиска
+     * @param param входные параметры для выполнения поиска
      * @return результат выполнения поиска
      */
-    private ResultDto execute(final ParamDto findParam) {
-        throw new RuntimeException();
+    ResultDto execute(final ParamDto param) {
+        return validate(param)
+                .map(p -> new ResultDto())
+                .orElseThrow(RuntimeException::new);
+    }
+
+    private Optional<ParamDto> validate(final ParamDto param) {
+        final ContractValidator validator = new ContractValidator(param);
+        validator.validate();
+        return Optional.of(param);
     }
 }
