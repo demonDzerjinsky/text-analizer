@@ -5,7 +5,5 @@ package ru.ssp.dto;
  * <p>
  *
  */
-public class FindParamDto {
-
+public record ParamDto() {
 }
-

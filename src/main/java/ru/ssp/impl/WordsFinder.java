@@ -1,7 +1,7 @@
 package ru.ssp.impl;
 
-import ru.ssp.dto.FindParamDto;
-import ru.ssp.dto.TopResultDto;
+import ru.ssp.dto.ParamDto;
+import ru.ssp.dto.ResultDto;
 
 /**
  * основной класс, логика поиска, точка входа.
@@ -13,8 +13,7 @@ public final class WordsFinder {
     }
 
     /**
-     * фабричный метод получение экземпляра с доступом только из пакета (для
-     * тестов).
+     * фабричный метод получение экземпляра с доступом только из пакета.
      *
      * @return экземпляр класса
      */
@@ -35,9 +34,9 @@ public final class WordsFinder {
      * @exception WordsFinderConrurrentException в случае если вызов сделан
      * в время работы предыдущего вызова
      */
-    public static TopResultDto find(final FindParamDto findParam) {
+    public static ResultDto find(final ParamDto findParam) {
         // TODO lock and check locking
-        WordsFinder finder = WordsFinder.getInstance();
+        final WordsFinder finder = WordsFinder.getInstance();
         return finder.execute(findParam);
     }
 
@@ -47,7 +46,7 @@ public final class WordsFinder {
      * @param findParam входные параметры для выполнения поиска
      * @return результат выполнения поиска
      */
-    private TopResultDto execute(final FindParamDto findParam) {
+    private ResultDto execute(final ParamDto findParam) {
         throw new RuntimeException();
     }
 }
