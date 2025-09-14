@@ -10,22 +10,29 @@ import ru.ssp.dto.ParamDto;
 import ru.ssp.exceptions.ContractValidateException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith({ MockitoExtension.class })
 public class WordsFinderTest {
 
-    private ContractValidator validator;
+    private Validator<ParamDto> validator;
+    @Mock
+    private WordsFinderEngine engine;
+    @InjectMocks
     private WordsFinder finder;
 
     @BeforeEach
     void prepare() {
         validator = new ContractValidator();
-        finder = new WordsFinder(validator);
+        finder = new WordsFinder(validator, engine);
     }
 
     @Test
     void throwExceptionWhenParametersNotValid() {
         assertAll(
-
                 () -> assertThrows(
                         ContractValidateException.class,
                         () -> finder.execute(
@@ -50,12 +57,12 @@ public class WordsFinderTest {
                         ContractValidateException.class,
                         () -> finder.execute(
                                 new ParamDto("./someNotExistsDir", 1, 1)))
-                // () -> assertThrows(
-                //         ContractValidateException.class,
-                //         () -> finder.execute(
-                //                 new ParamDto(".", 1, 1)))
-
+        // () -> assertThrows(
+        // ContractValidateException.class,
+        // () -> finder.execute(
+        // new ParamDto(".", 1, 1)))
         );
+        //verify no interraction
     }
 
     @Test

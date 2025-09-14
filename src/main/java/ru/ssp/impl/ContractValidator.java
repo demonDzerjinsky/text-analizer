@@ -8,7 +8,7 @@ import ru.ssp.exceptions.ContractValidateException;
 /**
  * проверки параметров вызова.
  */
-public class ContractValidator {
+class ContractValidator implements Validator<ParamDto> {
     /**
      * ограничение по количеству слов.
      */
@@ -37,6 +37,7 @@ public class ContractValidator {
      *
      * @param param
      */
+    @Override
     public void validate(final ParamDto param) {
         if (param == null
                 || param.srcDir() == null

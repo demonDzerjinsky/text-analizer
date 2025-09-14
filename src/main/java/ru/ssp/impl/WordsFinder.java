@@ -6,18 +6,24 @@ import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
 
 /**
- * основной класс, логика поиска, точка входа.
- *
+ * фасад.
  *
  */
 public final class WordsFinder {
     /**
      * валидатор контракта вызова.
      */
-    private final ContractValidator validator;
+    private final Validator<ParamDto> validator;
+    /**
+     * поисковый движок.
+     */
+    private final FindWords finderEngine;
 
-    WordsFinder(final ContractValidator pvalidator) {
+    WordsFinder(
+            final Validator<ParamDto> pvalidator,
+            final FindWords pfinder) {
         this.validator = pvalidator;
+        this.finderEngine = pfinder;
     }
 
     /**
@@ -31,16 +37,12 @@ public final class WordsFinder {
      * @param findParam пераметры вызова
      * @return результаты вызова
      * @exception WordsFinderConcurrentException
-     *                                           в случае если вызов сделан
-     *                                           в время работы предыдущего
-     *                                           вызова
      */
     public static ResultDto find(final ParamDto findParam) {
         // TODO lock and check locking
-        final WordsFinder finder = new WordsFinder(
-                new ContractValidator()
-
-        );
+        final WordsFinder finder = new WordsFinder(// можно вынести в фабр.
+                new ContractValidator(),
+                new WordsFinderEngine());
         return finder.execute(findParam);
     }
 
@@ -52,7 +54,11 @@ public final class WordsFinder {
      */
     ResultDto execute(final ParamDto param) {
         return validate(param)
-                .map(p -> new ResultDto())
+                .flatMap(p -> finderEngine.find(
+                        p.srcDir(),
+                        p.nWords(),
+                        p.nThreads()))
+                .map(ResultDto::new)
                 .orElseThrow(RuntimeException::new);
     }
 
