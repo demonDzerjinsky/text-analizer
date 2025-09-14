@@ -49,6 +49,7 @@ public final class ContractValidator {
     public void validate() {
         if (this.param == null
                 || this.param.srcDir() == null
+                || checkDirIsNotExists()
                 || this.param.srcDir().isBlank()
                 || this.param.nWords() <= 0
                 || this.param.nWords() > WLIMIT
@@ -56,5 +57,14 @@ public final class ContractValidator {
                 || this.param.nThreads() > PLIMIT) {
             throw new ContractValidateException(ERROR_MSG);
         }
+    }
+
+    /**
+     * проверяет если заданный каталог не существует.
+     *
+     * @return true если каталог не существует
+     */
+    private boolean checkDirIsNotExists() {
+        return false;
     }
 }

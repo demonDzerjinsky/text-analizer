@@ -31,7 +31,23 @@ public class WordsFinderTest {
                 () -> assertThrows(
                         ContractValidateException.class,
                         () -> inst.execute(
-                                new ParamDto(null, 1, 1)))
+                                new ParamDto(null, 1, 1))),
+                () -> assertThrows(
+                        ContractValidateException.class,
+                        () -> inst.execute(
+                                new ParamDto(".", -1, 1))),
+                () -> assertThrows(
+                        ContractValidateException.class,
+                        () -> inst.execute(
+                                new ParamDto(".", 1, -1))),
+                () -> assertThrows(
+                        ContractValidateException.class,
+                        () -> inst.execute(
+                                new ParamDto(".", 10000, 1))),
+                () -> assertThrows(
+                        ContractValidateException.class,
+                        () -> inst.execute(
+                                new ParamDto(".", 1, 10000)))
 
         );
     }
