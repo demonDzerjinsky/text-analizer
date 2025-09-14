@@ -1,9 +1,16 @@
 package ru.ssp.impl;
 
+import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
+import java.util.List;
+
+import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
 
 import ru.ssp.dto.ParamDto;
@@ -15,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderTest {
@@ -57,17 +65,17 @@ public class WordsFinderTest {
                 () -> assertThrows(
                         ContractValidateException.class,
                         () -> finder.execute(
-                                new ParamDto("./someNotExistsDir", 1, 1)))
-        // () -> assertThrows(
-        // ContractValidateException.class,
-        // () -> finder.execute(
-        // new ParamDto(".", 2, 1)))
-        );
+                                new ParamDto("./someNotExistsDir", 1, 1))));
         Mockito.verifyNoInteractions(engine);
     }
 
     @Test
     void checkExecuteWordsFinderEngineWhenParametersValid() {
-        assertTrue(true);
+        Mockito.doReturn(
+                of(List.of(new Pair<String, Integer>("word", 1))))
+                .when(engine).find(anyString(), anyInt(), anyInt());
+        finder.execute(new ParamDto(".", 2, 1));
+        Mockito.verify(engine, Mockito.times(1))
+                .find(anyString(), anyInt(), anyInt());
     }
 }
