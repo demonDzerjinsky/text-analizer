@@ -11,16 +11,13 @@ import ru.ssp.dto.ResultDto;
  *
  */
 public final class WordsFinder {
-    private WordsFinder() {
-    }
-
     /**
-     * фабричный метод получение экземпляра с доступом только из пакета.
-     *
-     * @return экземпляр класса
+     * валидатор контракта вызова.
      */
-    static WordsFinder getInstance() {
-        return new WordsFinder();
+    private final ContractValidator validator;
+
+    WordsFinder(final ContractValidator pvalidator) {
+        this.validator = pvalidator;
     }
 
     /**
@@ -29,7 +26,7 @@ public final class WordsFinder {
      * только один вызов обрабатывается, остальные вызовы в момент обработки
      * получат исключение.
      * Исходим из того что вызов занимает все ядра и параллельные вызовы
-     * могут привести к общей деградации
+     * могут привести к общей деградации, по этому должны откидываться
      *
      * @param findParam пераметры вызова
      * @return результаты вызова
@@ -40,7 +37,10 @@ public final class WordsFinder {
      */
     public static ResultDto find(final ParamDto findParam) {
         // TODO lock and check locking
-        final WordsFinder finder = WordsFinder.getInstance();
+        final WordsFinder finder = new WordsFinder(
+                new ContractValidator()
+
+        );
         return finder.execute(findParam);
     }
 
@@ -57,8 +57,7 @@ public final class WordsFinder {
     }
 
     private Optional<ParamDto> validate(final ParamDto param) {
-        final ContractValidator validator = new ContractValidator(param);
-        validator.validate();
+        validator.validate(param);
         return Optional.of(param);
     }
 }

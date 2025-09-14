@@ -1,8 +1,10 @@
 package ru.ssp.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
 
 import ru.ssp.dto.ParamDto;
 import ru.ssp.exceptions.ContractValidateException;
@@ -11,44 +13,53 @@ import org.junit.jupiter.api.Test;
 
 public class WordsFinderTest {
 
-    @Test
-    void findTopShouldExecuteTextFinder() {
-        // TODO
-        assertThat(true);
-    }
+    private ContractValidator validator;
+    private WordsFinder finder;
 
-    @Test
-    void getInstanceShouldReturnInstance() {
-        final WordsFinder inst = WordsFinder.getInstance();
-        assertThat(inst).isNotNull();
+    @BeforeEach
+    void prepare() {
+        validator = new ContractValidator();
+        finder = new WordsFinder(validator);
     }
 
     @Test
     void throwExceptionWhenParametersNotValid() {
-        final WordsFinder inst = WordsFinder.getInstance();
         assertAll(
 
                 () -> assertThrows(
                         ContractValidateException.class,
-                        () -> inst.execute(
+                        () -> finder.execute(
                                 new ParamDto(null, 1, 1))),
                 () -> assertThrows(
                         ContractValidateException.class,
-                        () -> inst.execute(
+                        () -> finder.execute(
                                 new ParamDto(".", -1, 1))),
                 () -> assertThrows(
                         ContractValidateException.class,
-                        () -> inst.execute(
+                        () -> finder.execute(
                                 new ParamDto(".", 1, -1))),
                 () -> assertThrows(
                         ContractValidateException.class,
-                        () -> inst.execute(
+                        () -> finder.execute(
                                 new ParamDto(".", 10000, 1))),
                 () -> assertThrows(
                         ContractValidateException.class,
-                        () -> inst.execute(
-                                new ParamDto(".", 1, 10000)))
+                        () -> finder.execute(
+                                new ParamDto(".", 1, 10000))),
+                () -> assertThrows(
+                        ContractValidateException.class,
+                        () -> finder.execute(
+                                new ParamDto("./someNotExistsDir", 1, 1)))
+                // () -> assertThrows(
+                //         ContractValidateException.class,
+                //         () -> finder.execute(
+                //                 new ParamDto(".", 1, 1)))
 
         );
+    }
+
+    @Test
+    void checkExecuteWordsFinderEngineWhenParametersValid() {
+        assertTrue(true);
     }
 }
