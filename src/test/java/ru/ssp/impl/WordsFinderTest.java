@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({ MockitoExtension.class })
@@ -60,9 +61,9 @@ public class WordsFinderTest {
         // () -> assertThrows(
         // ContractValidateException.class,
         // () -> finder.execute(
-        // new ParamDto(".", 1, 1)))
+        // new ParamDto(".", 2, 1)))
         );
-        //verify no interraction
+        Mockito.verifyNoInteractions(engine);
     }
 
     @Test
