@@ -36,7 +36,7 @@ public class WordsFinderTest {
     }
 
     @Test
-    void throwExceptionWhenParametersNotValid() {
+    void executeThrowExceptionWhenParametersNotValid() {
         assertAll(
                 () -> assertThrows(
                         ContractValidateException.class,
@@ -66,7 +66,7 @@ public class WordsFinderTest {
     }
 
     @Test
-    void checkExecuteWordsFinderEngineWhenParametersValid() {
+    void executeInvoceFindWhenValidParameters() {
         Mockito.doReturn(
                 of(List.of(new Pair<String, Integer>("word", 1))))
                 .when(engine).find(anyString(), anyInt(), anyInt());

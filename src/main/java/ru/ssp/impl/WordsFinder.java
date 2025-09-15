@@ -59,7 +59,7 @@ public final class WordsFinder  {
         }
     }
 
-    static WordsFinder createInstance() {
+    private static WordsFinder createInstance() {
         final WordsFinder finder = new WordsFinder(
                 new ContractValidator(),
                 new WordsFinderEngine());
