@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
@@ -67,11 +70,11 @@ public class WordsFinderTest {
 
     @Test
     void executeInvoceFindWhenValidParameters() {
-        Mockito.doReturn(
+        doReturn(
                 of(List.of(new Pair<String, Integer>("word", 1))))
                 .when(engine).find(anyString(), anyInt(), anyInt());
         finder.execute(new ParamDto(".", 2, 1));
-        Mockito.verify(engine, Mockito.times(1))
+        verify(engine, times(1))
                 .find(anyString(), anyInt(), anyInt());
     }
 }
