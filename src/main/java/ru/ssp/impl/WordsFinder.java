@@ -1,15 +1,23 @@
 package ru.ssp.impl;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
+import lombok.SneakyThrows;
 import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
+import ru.ssp.exceptions.WordsFinderConcurrentException;
 
 /**
- * фасад.
+ * входная точка в импементацию API.
  *
  */
-public final class WordsFinder {
+public final class WordsFinder  {
+    /**
+     * блокировка запуска второго метода {@code WordsFinder.find(...)}.
+     */
+    private static ReentrantLock lock = new ReentrantLock();
     /**
      * валидатор контракта вызова.
      */
@@ -38,12 +46,24 @@ public final class WordsFinder {
      * @return результаты вызова
      * @exception WordsFinderConcurrentException
      */
+    @SneakyThrows
     public static ResultDto find(final ParamDto findParam) {
-        // TODO lock and check locking
-        final WordsFinder finder = new WordsFinder(// можно вынести в фабр.
+        if (!lock.tryLock(1, TimeUnit.SECONDS)) {
+            throw new WordsFinderConcurrentException();
+        }
+        try {
+            return createInstance()
+                    .execute(findParam);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    static WordsFinder createInstance() {
+        final WordsFinder finder = new WordsFinder(
                 new ContractValidator(),
                 new WordsFinderEngine());
-        return finder.execute(findParam);
+        return finder;
     }
 
     /**

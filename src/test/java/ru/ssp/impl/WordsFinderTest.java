@@ -3,8 +3,6 @@ package ru.ssp.impl;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -12,17 +10,15 @@ import java.util.List;
 
 import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
-
-import ru.ssp.dto.ParamDto;
-import ru.ssp.exceptions.ContractValidateException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
+
+import ru.ssp.dto.ParamDto;
+import ru.ssp.exceptions.ContractValidateException;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderTest {
