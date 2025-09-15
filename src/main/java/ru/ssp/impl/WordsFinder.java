@@ -8,12 +8,13 @@ import lombok.SneakyThrows;
 import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
 import ru.ssp.exceptions.WordsFinderConcurrentException;
+import ru.ssp.exceptions.WordsFinderExecutionException;
 
 /**
  * входная точка в импементацию API.
  *
  */
-public final class WordsFinder  {
+public final class WordsFinder {
     /**
      * блокировка запуска второго метода {@code WordsFinder.find(...)}.
      */
@@ -79,7 +80,7 @@ public final class WordsFinder  {
                         p.nWords(),
                         p.nThreads()))
                 .map(ResultDto::new)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new WordsFinderExecutionException(""));
     }
 
     private Optional<ParamDto> validate(final ParamDto param) {

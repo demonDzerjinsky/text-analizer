@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import org.javatuples.Pair;
 
+import ru.ssp.exceptions.WordsFinderExecutionException;
+
 /**
  * выполняет поиск слов в каталоге по условиям задачи.
  *
@@ -42,9 +44,15 @@ class WordsFinderEngineWorker implements FindWords {
             final String dir,
             final int nWords,
             final int nThreads) {
-        return of(dscanner.scanDir(dir))
-                .map(fls -> planner.makeTasks(fls, nThreads))
-                .map(tsks -> executor.executeTasks(tsks, nWords, nThreads));
+        try {
+            return of(dscanner.scanDir(dir))
+                    .map(fls -> planner.makeTasks(fls, nThreads))
+                    .map(tsks -> executor.executeTasks(tsks, nWords, nThreads));
+        } catch (Exception e) {
+            throw new WordsFinderExecutionException(
+                    e.getMessage(),
+                    e.getCause());
+        }
     }
 
 }

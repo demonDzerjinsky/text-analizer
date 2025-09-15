@@ -6,7 +6,7 @@ package ru.ssp.impl;
  *
  * @param <T> обобщенный тип
  */
-public interface BuildAware<T> {
+interface BuildAware<T> {
     /**
      * обобщенный метод создания.
      *
