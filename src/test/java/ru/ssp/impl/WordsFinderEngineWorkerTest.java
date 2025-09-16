@@ -1,10 +1,13 @@
 package ru.ssp.impl;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -57,34 +60,37 @@ public class WordsFinderEngineWorkerTest {
     @Mock
     private TaskExecutor executor;
 
-    private Function<String, List<Pair<String, Integer>>>
+    private Consumer<String>
 
     scannerThr = (dir) -> Mockito
             .doThrow(RuntimeException.class).when(scanner).scanDir(dir);
 
-    private Function<String, List<Pair<String, Integer>>>
+    private Consumer<String>
 
     scannerRet = (dir) -> Mockito
             .doReturn(files).when(scanner).scanDir(dir);
 
-    private Function<List<Pair<String, Integer>>, List<List<Triplet<String, Integer, Integer>>>>
+    private Consumer<List<Pair<String, Integer>>>
 
     plannerRet = (fls) -> Mockito
             .doReturn(tasks).when(planner).makeTasks(fls, nThreads);
 
-    private Function<List<Pair<String, Integer>>, List<List<Triplet<String, Integer, Integer>>>>
+    private Consumer<List<Pair<String, Integer>>>
 
     plannerThr = (fls) -> Mockito
             .doThrow(RuntimeException.class).when(planner).makeTasks(fls, nThreads);
 
-    private Function<List<List<Triplet<String, Integer, Integer>>>, List<Pair<String, Integer>>>
+    private Consumer<List<List<Triplet<String, Integer, Integer>>>>
 
     executorRet = (tsks) -> Mockito
             .doReturn(words).when(executor).executeTasks(tsks, nWords, nThreads);
 
-    private Function<List<List<Triplet<String, Integer, Integer>>>, List<Pair<String, Integer>>>
+    private Consumer<List<List<Triplet<String, Integer, Integer>>>>
 
     executionThr = (tsks) -> Mockito
             .doThrow(RuntimeException.class).when(executor).executeTasks(tsks, nWords, nThreads);
 
+    @Test
+    void findReturnsResultWhenAllSuccess() {
+    }
 }
