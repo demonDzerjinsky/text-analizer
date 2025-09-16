@@ -1,10 +1,12 @@
 package ru.ssp.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.assertj.core.api.Assertions;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.junit.jupiter.api.Test;
@@ -92,5 +94,14 @@ public class WordsFinderEngineWorkerTest {
 
     @Test
     void findReturnsResultWhenAllSuccess() {
+        final String dir = "someDir";
+        scannerRet.accept(dir);
+        plannerRet.accept(files);
+        executorRet.accept(tasks);
+        var result = eWorker.find(dir, nWords, nThreads);
+        Assertions.assertThat(result).isNotNull();
+        verify(scanner, times(1)).scanDir(dir);
+        verify(planner, times(1)).makeTasks(files, nThreads);
+        verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
     }
 }
