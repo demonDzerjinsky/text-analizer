@@ -93,4 +93,15 @@ public class WordsFinderEngineWorkerTest {
         verifyNoInteractions(planner, executor);
     }
 
+    @Test
+    void findThrowsWhenPlannerFail() {
+        final String dir = "someDir";
+        scannerRet.accept(dir);
+        plannerThr.accept(files);
+        assertThrows(WordsFinderExecutionException.class, () -> eWorker.find(dir, nWords, nThreads));
+        verify(scanner, times(1)).scanDir(dir);
+        verify(planner, times(1)).makeTasks(files, nThreads);
+        verifyNoInteractions(executor);
+    }
+
 }
