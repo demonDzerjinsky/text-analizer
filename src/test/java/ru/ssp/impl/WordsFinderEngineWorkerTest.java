@@ -1,5 +1,6 @@
 package ru.ssp.impl;
 
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,36 +21,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderEngineWorkerTest {
-    private final List<Pair<String, Integer>>
+    private final List<Pair<String, Integer>> files = of(new Pair<String, Integer>("file1", 111));
 
-    files = List.of(new Pair<String, Integer>("file1", 111));
+    private final List<List<Triplet<String, Integer, Integer>>> tasks = of(
+            of(new Triplet<String, Integer, Integer>("file1", 1, 100)));
 
-    private final List<List<Triplet<String, Integer, Integer>>>
-
-    tasks = List.of(List.of( // tasks for thread 1
-            new Triplet<String, Integer, Integer>("file1", 1, 100)));
-
-    private final List<Pair<String, Integer>>
-
-    words = List.of(
+    private final List<Pair<String, Integer>> words = of(
             new Pair<String, Integer>("word6", 10),
-
             new Pair<String, Integer>("word1", 15),
-
             new Pair<String, Integer>("word7", 16),
-
             new Pair<String, Integer>("word2", 20),
-
             new Pair<String, Integer>("word8", 40),
-
             new Pair<String, Integer>("word3", 50),
-
             new Pair<String, Integer>("word9", 51),
-
             new Pair<String, Integer>("word4", 55),
-
             new Pair<String, Integer>("word0", 60),
-
             new Pair<String, Integer>("word5", 93));
 
     private final int nThreads = 1;
@@ -64,34 +50,20 @@ public class WordsFinderEngineWorkerTest {
     @Mock
     private TaskExecutor executor;
 
-    private Consumer<String>
+    private Consumer<String> scannerThr = (dir) -> Mockito.doThrow(RuntimeException.class).when(scanner).scanDir(dir);
 
-    scannerThr = (dir) -> Mockito
-            .doThrow(RuntimeException.class).when(scanner).scanDir(dir);
+    private Consumer<String> scannerRet = (dir) -> Mockito.doReturn(files).when(scanner).scanDir(dir);
 
-    private Consumer<String>
+    private Consumer<List<Pair<String, Integer>>> plannerRet = (fls) -> Mockito.doReturn(tasks).when(planner)
+            .makeTasks(fls, nThreads);
 
-    scannerRet = (dir) -> Mockito
-            .doReturn(files).when(scanner).scanDir(dir);
+    private Consumer<List<Pair<String, Integer>>> plannerThr = (fls) -> Mockito.doThrow(RuntimeException.class)
+            .when(planner).makeTasks(fls, nThreads);
 
-    private Consumer<List<Pair<String, Integer>>>
+    private Consumer<List<List<Triplet<String, Integer, Integer>>>> executorRet = (tsks) -> Mockito.doReturn(words)
+            .when(executor).executeTasks(tsks, nWords, nThreads);
 
-    plannerRet = (fls) -> Mockito
-            .doReturn(tasks).when(planner).makeTasks(fls, nThreads);
-
-    private Consumer<List<Pair<String, Integer>>>
-
-    plannerThr = (fls) -> Mockito
-            .doThrow(RuntimeException.class).when(planner).makeTasks(fls, nThreads);
-
-    private Consumer<List<List<Triplet<String, Integer, Integer>>>>
-
-    executorRet = (tsks) -> Mockito
-            .doReturn(words).when(executor).executeTasks(tsks, nWords, nThreads);
-
-    private Consumer<List<List<Triplet<String, Integer, Integer>>>>
-
-    executionThr = (tsks) -> Mockito
+    private Consumer<List<List<Triplet<String, Integer, Integer>>>> executionThr = (tsks) -> Mockito
             .doThrow(RuntimeException.class).when(executor).executeTasks(tsks, nWords, nThreads);
 
     @Test
@@ -105,7 +77,8 @@ public class WordsFinderEngineWorkerTest {
         verify(scanner, times(1)).scanDir(dir);
         verify(planner, times(1)).makeTasks(files, nThreads);
         verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
+        assertThat(result).isPresent();
+        result.ifPresent(it -> assertThat(it).containsExactlyInAnyOrderElementsOf(words));
     }
-
 
 }
