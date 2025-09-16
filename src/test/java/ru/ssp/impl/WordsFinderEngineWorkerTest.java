@@ -87,16 +87,4 @@ public class WordsFinderEngineWorkerTest {
     executionThr = (tsks) -> Mockito
             .doThrow(RuntimeException.class).when(executor).executeTasks(tsks, nWords, nThreads);
 
-    /**
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    */
 }
