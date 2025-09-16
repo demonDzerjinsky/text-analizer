@@ -1,12 +1,14 @@
 package ru.ssp.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static ru.ssp.utils.TupleUtil.fromPair;
+import static ru.ssp.utils.TupleUtil.fromPairsList;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.assertj.core.api.Assertions;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.junit.jupiter.api.Test;
@@ -99,9 +101,11 @@ public class WordsFinderEngineWorkerTest {
         plannerRet.accept(files);
         executorRet.accept(tasks);
         var result = eWorker.find(dir, nWords, nThreads);
-        Assertions.assertThat(result).isNotNull();
+        assertThat(result).isNotNull();
         verify(scanner, times(1)).scanDir(dir);
         verify(planner, times(1)).makeTasks(files, nThreads);
         verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
     }
+
+
 }
