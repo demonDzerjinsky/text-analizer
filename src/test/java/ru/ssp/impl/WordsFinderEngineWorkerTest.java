@@ -2,8 +2,10 @@ package ru.ssp.impl;
 
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static ru.ssp.utils.TupleUtil.fromPair;
 import static ru.ssp.utils.TupleUtil.fromPairsList;
 
@@ -18,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import ru.ssp.exceptions.WordsFinderExecutionException;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderEngineWorkerTest {
@@ -73,12 +77,20 @@ public class WordsFinderEngineWorkerTest {
         plannerRet.accept(files);
         executorRet.accept(tasks);
         var result = eWorker.find(dir, nWords, nThreads);
-        assertThat(result).isNotNull();
+        assertThat(result).isPresent();
+        result.ifPresent(it -> assertThat(it).containsExactlyInAnyOrderElementsOf(words));
         verify(scanner, times(1)).scanDir(dir);
         verify(planner, times(1)).makeTasks(files, nThreads);
         verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
-        assertThat(result).isPresent();
-        result.ifPresent(it -> assertThat(it).containsExactlyInAnyOrderElementsOf(words));
+    }
+
+    @Test
+    void findThrowsWhenScannerFail() {
+        final String dir = "someDir";
+        scannerThr.accept(dir);
+        assertThrows(WordsFinderExecutionException.class, () -> eWorker.find(dir, nWords, nThreads));
+        verify(scanner, times(1)).scanDir(dir);
+        verifyNoInteractions(planner, executor);
     }
 
 }
