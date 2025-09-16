@@ -104,4 +104,16 @@ public class WordsFinderEngineWorkerTest {
         verifyNoInteractions(executor);
     }
 
+    @Test
+    void findThrowsWhenExecutorFail() {
+        final String dir = "someDir";
+        scannerRet.accept(dir);
+        plannerRet.accept(files);
+        executionThr.accept(tasks);
+        assertThrows(WordsFinderExecutionException.class, () -> eWorker.find(dir, nWords, nThreads));
+        verify(scanner, times(1)).scanDir(dir);
+        verify(planner, times(1)).makeTasks(files, nThreads);
+        verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
+    }
+
 }
