@@ -5,6 +5,8 @@ import java.util.List;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
+import lombok.NonNull;
+
 /**
  * реализует интерфейс формирования пула задач.
  */
@@ -61,8 +63,15 @@ class TaskPlannerImpl implements TaskPlanner {
     }
 
     Long calcSumSize(
-            final List<Pair<String, Long>> files) {
-        throw new UnsupportedOperationException("");
+            @NonNull final List<Pair<String, Long>> files) {
+        long sum = 0;
+        for (var it : files) {
+            sum += it.getValue1();
+        }
+        if (sum == 0) {
+            throw new RuntimeException("0 - sized files");
+        }
+        return sum;
     }
 
     /**

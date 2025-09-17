@@ -1,0 +1,35 @@
+package ru.ssp.impl;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
+import org.javatuples.Pair;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class TaskPlannerImplTest {
+
+    private TaskPlannerImpl planner;
+
+    @BeforeEach
+    void prepare() {
+        planner = new TaskPlannerImpl();
+    }
+
+    @Test
+    void calcSumReturnValWhenFilesWithSize() {
+        final List<Pair<String, Long>> files = List.of(
+                new Pair<String, Long>("file1", 1000L),
+                new Pair<String, Long>("file2", 1523L),
+                new Pair<String, Long>("file3", 1500L));
+        final long expected = files.get(0).getValue1()
+                + files.get(1).getValue1()
+                + files.get(2).getValue1();
+        assertThat(planner.calcSumSize(files)).isEqualTo(expected);
+    }
+
+    @Test
+    void calcSumThrowsWhenNoFilesWithSize() {
+    }
+}
