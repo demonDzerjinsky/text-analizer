@@ -3,6 +3,9 @@ package ru.ssp.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.List;
+
+import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +23,9 @@ public class DirectoryScannerImplTest {
     @Test
     void scanReturnsNonEmptyListWhenDirNotEmpty() {
         var result = scanner.scanDir("./resources/folder");
-        assertThat(result).isNotEmpty();
+        final List<Pair<String, Long>> expected = List.of(new Pair<String, Long>("./resources/folder/file1.txt", 22L));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+        // log.info(result.toString());
     }
 
     @Test
