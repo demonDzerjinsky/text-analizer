@@ -44,7 +44,7 @@ class DirectoryScannerImpl implements DirectoryScanner {
             }
             return retList;
         } catch (IOException ex) {
-            log.error(ex.getMessage(), ex);
+            log.debug(ex.getMessage(), ex);
             throw new RuntimeException(ex.getMessage(), ex.getCause());
         }
     }

@@ -1,21 +1,37 @@
 package ru.ssp.impl;
 
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DirectoryScannerImplTest {
+import lombok.extern.slf4j.Slf4j;
 
-    @Test
-    void scanReturnsNonEmptyListWhenDirNotEmpty() {
-        var scanner = new DirectoryScannerImpl();
-        var result = scanner.scanDir("./resources/folder");
-        Assertions.assertThat(result).isNotEmpty();
+@Slf4j
+public class DirectoryScannerImplTest {
+    private DirectoryScanner scanner;
+
+    @BeforeEach
+    void prepare() {
+        scanner = new DirectoryScannerImpl();
     }
 
     @Test
-    void scatReturnsEmptyListWhenDirIsEmpty() {
-        var scanner = new DirectoryScannerImpl();
+    void scanReturnsNonEmptyListWhenDirNotEmpty() {
+        var result = scanner.scanDir("./resources/folder");
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    void scanReturnsEmptyListWhenDirIsEmpty() {
         var result = scanner.scanDir("./resources/emptyFolder");
-        Assertions.assertThat(result).isEmpty();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void scanThrowsWhenDirNotExists() {
+        var ex = assertThrows(RuntimeException.class, () -> scanner.scanDir("any"));
+        // log.info(ex.getMessage(), ex);
     }
 }
