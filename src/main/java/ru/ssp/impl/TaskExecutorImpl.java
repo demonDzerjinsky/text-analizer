@@ -20,7 +20,7 @@ class TaskExecutorImpl implements TaskExecutor {
      */
     @Override
     public List<Pair<String, Integer>> executeTasks(
-            final List<List<Triplet<String, Integer, Integer>>> tasks,
+            final List<List<Triplet<String, Long, Long>>> tasks,
             final int nWord,
             final int nThread) {
         throw new UnsupportedOperationException();

@@ -10,7 +10,7 @@ import org.javatuples.Triplet;
  */
 interface TaskExecutor {
     List<Pair<String, Integer>> executeTasks(
-            List<List<Triplet<String, Integer, Integer>>> tasks,
+            List<List<Triplet<String, Long, Long>>> tasks,
             int nWord,
             int nThread);
 }

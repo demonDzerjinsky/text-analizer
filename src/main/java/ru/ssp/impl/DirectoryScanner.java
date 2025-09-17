@@ -14,5 +14,5 @@ interface DirectoryScanner {
      * @param dirName каталог для сканирования
      * @return метаданные для планировщика задач
      */
-    List<Pair<String, Integer>> scanDir(String dirName);
+    List<Pair<String, Long>> scanDir(String dirName);
 }

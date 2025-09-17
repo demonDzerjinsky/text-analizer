@@ -18,8 +18,8 @@ class TaskPlannerImpl implements TaskPlanner {
      * @return пул задач на потоки
      */
     @Override
-    public List<List<Triplet<String, Integer, Integer>>> makeTasks(
-            final List<Pair<String, Integer>> files,
+    public List<List<Triplet<String, Long, Long>>> makeTasks(
+            final List<Pair<String, Long>> files,
             final int nThread) {
         throw new UnsupportedOperationException();
     }

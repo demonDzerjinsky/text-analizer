@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static ru.ssp.utils.TupleUtil.fromPair;
-import static ru.ssp.utils.TupleUtil.fromPairsList;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,10 +23,10 @@ import ru.ssp.exceptions.WordsFinderExecutionException;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderEngineWorkerTest {
-    private final List<Pair<String, Integer>> files = of(new Pair<String, Integer>("file1", 111));
+    private final List<Pair<String, Long>> files = of(new Pair<String, Long>("file1", 111L));
 
-    private final List<List<Triplet<String, Integer, Integer>>> tasks = of(
-            of(new Triplet<String, Integer, Integer>("file1", 1, 100)));
+    private final List<List<Triplet<String, Long, Long>>> tasks = of(
+            of(new Triplet<String, Long, Long>("file1", 1L, 100L)));
 
     private final List<Pair<String, Integer>> words = of(
             new Pair<String, Integer>("word6", 10),
@@ -58,16 +56,16 @@ public class WordsFinderEngineWorkerTest {
 
     private Consumer<String> scannerRet = (dir) -> Mockito.doReturn(files).when(scanner).scanDir(dir);
 
-    private Consumer<List<Pair<String, Integer>>> plannerRet = (fls) -> Mockito.doReturn(tasks).when(planner)
+    private Consumer<List<Pair<String, Long>>> plannerRet = (fls) -> Mockito.doReturn(tasks).when(planner)
             .makeTasks(fls, nThreads);
 
-    private Consumer<List<Pair<String, Integer>>> plannerThr = (fls) -> Mockito.doThrow(RuntimeException.class)
+    private Consumer<List<Pair<String, Long>>> plannerThr = (fls) -> Mockito.doThrow(RuntimeException.class)
             .when(planner).makeTasks(fls, nThreads);
 
-    private Consumer<List<List<Triplet<String, Integer, Integer>>>> executorRet = (tsks) -> Mockito.doReturn(words)
+    private Consumer<List<List<Triplet<String, Long, Long>>>> executorRet = (tsks) -> Mockito.doReturn(words)
             .when(executor).executeTasks(tsks, nWords, nThreads);
 
-    private Consumer<List<List<Triplet<String, Integer, Integer>>>> executionThr = (tsks) -> Mockito
+    private Consumer<List<List<Triplet<String, Long, Long>>>> executionThr = (tsks) -> Mockito
             .doThrow(RuntimeException.class).when(executor).executeTasks(tsks, nWords, nThreads);
 
     @Test

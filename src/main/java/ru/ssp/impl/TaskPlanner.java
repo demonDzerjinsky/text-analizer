@@ -8,7 +8,7 @@ import org.javatuples.Triplet;
 /**
  * нарезает задачи по переданному пулу файлов на n worker-ов.
  *
- * необходимо достич примерно одинаковой загрузки на все выделенные ресурсы.
+ * формирует задачи примерно одинаковой загрузки на все выделенные ресурсы.
  */
 interface TaskPlanner {
     /**
@@ -18,7 +18,7 @@ interface TaskPlanner {
      * @param nThread количество потоков
      * @return пул задач на каждый поток
      */
-    List<List<Triplet<String, Integer, Integer>>> makeTasks(
-            List<Pair<String, Integer>> files,
+    List<List<Triplet<String, Long, Long>>> makeTasks(
+            List<Pair<String, Long>> files,
             int nThread);
 }
