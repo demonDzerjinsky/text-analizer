@@ -50,6 +50,8 @@ public class TaskPlannerImplTest {
         assertThat(planner.calcEffectiveThreads(39, 5)).isEqualTo(1);
         assertThat(planner.calcEffectiveThreads(40, 5)).isEqualTo(2);
         assertThat(planner.calcEffectiveThreads(41, 5)).isEqualTo(2);
+        assertThat(planner.calcEffectiveThreads(100, 5)).isEqualTo(5);
+        assertThat(planner.calcEffectiveThreads(200, 5)).isEqualTo(5);
     }
 
     /*
