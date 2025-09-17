@@ -14,6 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class TaskPlannerImpl implements TaskPlanner {
     /**
+     * сообщение ошибки.
+     */
+    private static final String ZERO_SIZED_FILES = "0 - sized files";
+    /**
+     * сообщение ошибки.
+     */
+    private static final String BAD_PARAMS = "bad params";
+    /**
      * default limit constant.
      */
     private static final Long DEFAULT_LIMIT = 20L;
@@ -45,7 +53,7 @@ class TaskPlannerImpl implements TaskPlanner {
             final List<Pair<String, Long>> files,
             final int nThread) {
         final long sumFilesSize = calcSumSize(files);
-        final int effectiveThreads = calcEffectiveThreads(
+        final long effectiveThreads = calcEffectiveThreads(
                 sumFilesSize,
                 nThread);
         return generateTasks(files, sumFilesSize, effectiveThreads);
@@ -54,14 +62,33 @@ class TaskPlannerImpl implements TaskPlanner {
     List<List<Triplet<String, Long, Long>>> generateTasks(
             final List<Pair<String, Long>> files,
             final long sumFilesSize,
-            final int effectiveThreads) {
+            final long effectiveThreads) {
         throw new UnsupportedOperationException("");
     }
 
-    int calcEffectiveThreads(
+    /**
+     * определяет сколько нужно реально потоков обработки
+     * для выполнения всей работы объемом {@code sumFilesSize}
+     * с загруженностью потока не меньше установленного лимита
+     * и верхней границе количества потоков.
+     *
+     * @param sumFilesSize общий объем работы в байтах
+     * @param nThread      верхняя граница количеств потоков обработки
+     * @return количестро потоков
+     */
+    long calcEffectiveThreads(
             final long sumFilesSize,
             final int nThread) {
-        throw new UnsupportedOperationException("");
+        if (nThread <= 0 || sumFilesSize <= 0) {
+            throw new RuntimeException(BAD_PARAMS);
+        }
+        if (sumFilesSize > nThread * minBytesLimit) {
+            return nThread;
+        }
+        if (sumFilesSize < minBytesLimit) {
+            return 1;
+        }
+        return sumFilesSize / minBytesLimit;
     }
 
     Long calcSumSize(
@@ -71,7 +98,7 @@ class TaskPlannerImpl implements TaskPlanner {
             sum += it.getValue1();
         }
         if (sum == 0) {
-            throw new RuntimeException("0 - sized files");
+            throw new RuntimeException(ZERO_SIZED_FILES);
         }
         return sum;
     }
