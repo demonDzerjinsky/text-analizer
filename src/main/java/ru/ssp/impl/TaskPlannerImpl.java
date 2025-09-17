@@ -6,10 +6,12 @@ import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * реализует интерфейс формирования пула задач.
  */
+@Slf4j
 class TaskPlannerImpl implements TaskPlanner {
     /**
      * default limit constant.

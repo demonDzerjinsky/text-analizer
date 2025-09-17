@@ -1,9 +1,11 @@
 package ru.ssp.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,5 +33,21 @@ public class TaskPlannerImplTest {
 
     @Test
     void calcSumThrowsWhenNoFilesWithSize() {
+        final List<Pair<String, Long>> files = List.of(
+                new Pair<String, Long>("file1", 0L),
+                new Pair<String, Long>("file2", 0L),
+                new Pair<String, Long>("file3", 0L));
+        assertThrows(RuntimeException.class, () -> planner.calcSumSize(null));
+        assertThrows(RuntimeException.class, () -> planner.calcSumSize(files));
     }
+
+    /*
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
 }
