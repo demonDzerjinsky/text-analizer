@@ -13,7 +13,6 @@ class TaskPlannerImpl implements TaskPlanner {
      * default limit constant.
      */
     private static final Long DEFAULT_LIMIT = 20L;
-    // в последствии можно вынести в конфиг
     /**
      * минимальный объем на поток.
      * конфигурационный параметр.
@@ -41,7 +40,29 @@ class TaskPlannerImpl implements TaskPlanner {
     public List<List<Triplet<String, Long, Long>>> makeTasks(
             final List<Pair<String, Long>> files,
             final int nThread) {
-        throw new UnsupportedOperationException();
+        final long sumFilesSize = calcSumSize(files);
+        final int effectiveThreads = calcEffectiveThreads(
+                sumFilesSize,
+                nThread);
+        return generateTasks(files, sumFilesSize, effectiveThreads);
+    }
+
+    List<List<Triplet<String, Long, Long>>> generateTasks(
+            final List<Pair<String, Long>> files,
+            final long sumFilesSize,
+            final int effectiveThreads) {
+        throw new UnsupportedOperationException("");
+    }
+
+    int calcEffectiveThreads(
+            final long sumFilesSize,
+            final int nThread) {
+        throw new UnsupportedOperationException("");
+    }
+
+    Long calcSumSize(
+            final List<Pair<String, Long>> files) {
+        throw new UnsupportedOperationException("");
     }
 
     /**
