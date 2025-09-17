@@ -9,12 +9,32 @@ import org.javatuples.Triplet;
  * реализует интерфейс формирования пула задач.
  */
 class TaskPlannerImpl implements TaskPlanner {
+    /**
+     * default limit constant.
+     */
+    private static final Long DEFAULT_LIMIT = 20L;
+    // в последствии можно вынести в конфиг
+    /**
+     * минимальный объем на поток.
+     * конфигурационный параметр.
+     */
+    private Long minBytesLimit = DEFAULT_LIMIT;
 
     /**
      * формирует пул задач на nThread потоков.
      *
-     * @param files метаданные файл-объем
-     * @param nThread параметр количества потоков
+     * входной пул файлов разбивается на задачи обработки для каждого
+     * отдельного потока.
+     * протоков не может быть больше заданного в параметре вызова
+     * {@code nThread}, но может быть меньше по решению планировщика -
+     * если объем задачи таков что выделение отдельного потока
+     * не целесообразно.
+     * решение о целесообразности под какой минимальный объем обработки нужно
+     * выделить поток произвоится на основе {@code MIN_BYTES_LIMIT}
+     *
+     * @param files   метаданные файл-объем
+     * @param nThread параметр количества потоков - максимальное количество
+     *                потоков
      * @return пул задач на потоки
      */
     @Override
@@ -23,5 +43,30 @@ class TaskPlannerImpl implements TaskPlanner {
             final int nThread) {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * устонавливает минимальный лимит по объему работ на поток.
+     * объем ниже данного значения в задачу для отдельного потока
+     * не выделяется.
+     *
+     * @param limit объем задачи, байты
+     */
+    public void setLimit(final long limit) {
+        if (limit <= 0) {
+            throw new RuntimeException("limit should be greater than 0");
+        }
+        this.minBytesLimit = limit;
+    }
+
+    /*
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
 
 }
