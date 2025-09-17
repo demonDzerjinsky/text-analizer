@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * реализует интерфейс поиска файлов.
  */
+@Slf4j
 class DirectoryScannerImpl implements DirectoryScanner {
-
     /**
      * сканирует каталог и формирует метаданные для планировщика.
      *
@@ -42,6 +44,7 @@ class DirectoryScannerImpl implements DirectoryScanner {
             }
             return retList;
         } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
             throw new RuntimeException(ex.getMessage(), ex.getCause());
         }
     }
