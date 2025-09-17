@@ -20,7 +20,7 @@ public class TaskPlannerImplTest {
     }
 
     @Test
-    void calcSumReturnValWhenFilesWithSize() {
+    void calcSumReturnsValWhenFilesWithSize() {
         final List<Pair<String, Long>> files = List.of(
                 new Pair<String, Long>("file1", 1000L),
                 new Pair<String, Long>("file2", 1523L),
@@ -39,6 +39,17 @@ public class TaskPlannerImplTest {
                 new Pair<String, Long>("file3", 0L));
         assertThrows(RuntimeException.class, () -> planner.calcSumSize(null));
         assertThrows(RuntimeException.class, () -> planner.calcSumSize(files));
+    }
+
+    @Test
+    void calcThreadsReturnsNumberOfThreadsWhenParamsCorrect() {
+        planner.setLimit(20);
+        assertThat(planner.calcEffectiveThreads(10, 5)).isEqualTo(1);
+        assertThat(planner.calcEffectiveThreads(20, 5)).isEqualTo(1);
+        assertThat(planner.calcEffectiveThreads(21, 5)).isEqualTo(1);
+        assertThat(planner.calcEffectiveThreads(39, 5)).isEqualTo(1);
+        assertThat(planner.calcEffectiveThreads(40, 5)).isEqualTo(2);
+        assertThat(planner.calcEffectiveThreads(41, 5)).isEqualTo(2);
     }
 
     /*
