@@ -1,5 +1,6 @@
 package ru.ssp.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.javatuples.Pair;
@@ -13,6 +14,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 class TaskPlannerImpl implements TaskPlanner {
+    /**
+     * сообщение ошибки.
+     */
+    private static final String SOMETHING_WRONG = "something wrong";
     /**
      * сообщение ошибки.
      */
@@ -50,20 +55,72 @@ class TaskPlannerImpl implements TaskPlanner {
      */
     @Override
     public List<List<Triplet<String, Long, Long>>> makeTasks(
-            final List<Pair<String, Long>> files,
-            final int nThread) {
+            final List<Pair<String, Long>> files, final int nThread) {
         final long sumFilesSize = calcSumSize(files);
-        final long effectiveThreads = calcEffectiveThreads(
-                sumFilesSize,
-                nThread);
-        return generateTasks(files, sumFilesSize, effectiveThreads);
+        final long effThreads = calcEffectiveThreads(sumFilesSize, nThread);
+        return generateTasks(files, sumFilesSize, effThreads);
     }
 
+    /**
+     * распределяем всю работу объемом {@code sumFilesSize} примерно равными
+     * долями среди {@code effectiveThreads} потоков.
+     *
+     * @param files
+     * @param sumFilesSize
+     * @param effectiveThreads
+     * @return коллекция задач по потокам
+     */
     List<List<Triplet<String, Long, Long>>> generateTasks(
             final List<Pair<String, Long>> files,
             final long sumFilesSize,
             final long effectiveThreads) {
-        throw new UnsupportedOperationException("");
+        final long bytesPerThread = sumFilesSize / effectiveThreads;
+        long currPos = 1;
+        long nextPos = 0;
+        int currTaskIndex = 0;
+        int currFilesIndex = 0;
+        long currFileBytesIndex = 1;
+        var resTasks = new ArrayList<List<Triplet<String, Long, Long>>>();
+        while (currPos < sumFilesSize) {
+            nextPos = currPos + bytesPerThread;
+            if (nextPos > sumFilesSize) {
+                nextPos = sumFilesSize;
+            } else {
+                currTaskIndex++;
+            }
+            if (resTasks.size() == currTaskIndex) {
+                resTasks.add(new ArrayList<>());
+            }
+            while (currPos < nextPos) {
+                long nextFileBytesChank = nextPos - currPos;
+                var mabyOffset = currFileBytesIndex + nextFileBytesChank;
+                if (mabyOffset < files.get(currFilesIndex).getValue1()) {
+                    resTasks.get(currTaskIndex).add(
+                            new Triplet<String, Long, Long>(
+                                    files.get(currFilesIndex).getValue0(),
+                                    currFileBytesIndex,
+                                    currFileBytesIndex + nextFileBytesChank));
+                    currFileBytesIndex += nextFileBytesChank;
+                    currPos = nextPos;
+                    break;
+                }
+                nextFileBytesChank = files.get(currFilesIndex)
+                        .getValue1() - currFileBytesIndex;
+                currPos += nextFileBytesChank;
+                resTasks.get(currTaskIndex).add(
+                        new Triplet<String, Long, Long>(
+                                files.get(currFilesIndex).getValue0(),
+                                currFileBytesIndex,
+                                files.get(currFilesIndex).getValue1()));
+                currFilesIndex++;
+                currFileBytesIndex = 1;
+                if (files.size() <= currFilesIndex) {
+                    throw new RuntimeException(SOMETHING_WRONG);
+                }
+            }
+
+        }
+        return resTasks;
     }
 
     /**
