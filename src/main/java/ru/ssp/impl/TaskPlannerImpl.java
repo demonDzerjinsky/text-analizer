@@ -79,7 +79,7 @@ class TaskPlannerImpl implements TaskPlanner {
         long nextPos = 0;
         int currTaskIndex = 0;
         int currFilesIndex = 0;
-        long currFileBytesIndex = 1;
+        long currFileBytesIndex = 0;
         var resTasks = new ArrayList<List<Triplet<String, Long, Long>>>();
         while (currPos < sumFilesSize) {
             nextPos = currPos + bytesPerThread;
@@ -92,6 +92,13 @@ class TaskPlannerImpl implements TaskPlanner {
                 resTasks.add(new ArrayList<>());
             }
             while (currPos < nextPos) {
+                if (files.size() <= currFilesIndex) { // подстраховка
+                    log.debug("currFilesIndex {}", currFilesIndex);
+                    log.debug("sumFilesSize {}", sumFilesSize);
+                    log.debug("currPos {}", currPos);
+                    log.debug("nextPos {}", nextPos);
+                    throw new RuntimeException(SOMETHING_WRONG);
+                }
                 long nextFileBytesChank = nextPos - currPos;
                 var mabyOffset = currFileBytesIndex + nextFileBytesChank;
                 if (mabyOffset < files.get(currFilesIndex).getValue1()) {
@@ -113,10 +120,7 @@ class TaskPlannerImpl implements TaskPlanner {
                                 currFileBytesIndex,
                                 files.get(currFilesIndex).getValue1()));
                 currFilesIndex++;
-                currFileBytesIndex = 1;
-                if (files.size() <= currFilesIndex) {
-                    throw new RuntimeException(SOMETHING_WRONG);
-                }
+                currFileBytesIndex = 0;
             }
 
         }

@@ -1,11 +1,11 @@
 package ru.ssp.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +54,22 @@ public class TaskPlannerImplTest {
         assertThat(planner.calcEffectiveThreads(200, 5)).isEqualTo(5);
     }
 
+    @Test
+    void generateReturnsTasksToOneThread() {
+        final int nThread = 5;
+        final long minBytesOnThreadLimit = 2000;
+        planner.setLimit(minBytesOnThreadLimit);
+        final List<Pair<String, Long>> files = List.of(
+                new Pair<>("file1", 100L),
+                new Pair<>("file2", 200L),
+                new Pair<>("file3", 140L));
+        final long sumSize = planner.calcSumSize(files);
+        assertEquals(440L, sumSize);
+        final long eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(1L, eThreads);
+        var expected = planner.generateTasks(files, sumSize, eThreads);
+        assertThat(expected).size().isEqualTo(1);
+    }
     /*
      *
      *
