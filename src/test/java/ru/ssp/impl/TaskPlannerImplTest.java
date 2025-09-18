@@ -66,7 +66,6 @@ public class TaskPlannerImplTest {
         final long sumSize = planner.calcSumSize(files);
         assertEquals(441L, sumSize);
         long eThreads;
-        /*
         // суммарный объем файлов меньше чем лимит на один поток
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
@@ -81,9 +80,8 @@ public class TaskPlannerImplTest {
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
         assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
-        */
         // суммарный объем файлов больше лимита на два потока
-        planner.setLimit(sumSize/3 + 1);
+        planner.setLimit(sumSize/3 + 10);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(2L, eThreads);
         assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(2);

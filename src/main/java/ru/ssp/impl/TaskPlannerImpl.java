@@ -77,18 +77,15 @@ class TaskPlannerImpl implements TaskPlanner {
         final long bytesPerThread = sumFilesSize / effectiveThreads;
         long currPos = 1;
         long nextPos = 0;
-        int currTaskIndex = 0;
         int currFilesIndex = 0;
         long currFileBytesIndex = 0;
         var resTasks = new ArrayList<List<Triplet<String, Long, Long>>>();
+        resTasks.add(new ArrayList<>());
         while (currPos < sumFilesSize) {
             nextPos = currPos + bytesPerThread;
             if (nextPos > sumFilesSize) {
                 nextPos = sumFilesSize;
             } else {
-                currTaskIndex++;
-            }
-            if (resTasks.size() == currTaskIndex) {
                 resTasks.add(new ArrayList<>());
             }
             while (currPos < nextPos) {
@@ -102,7 +99,7 @@ class TaskPlannerImpl implements TaskPlanner {
                 long nextFileBytesChank = nextPos - currPos;
                 var mabyOffset = currFileBytesIndex + nextFileBytesChank;
                 if (mabyOffset < files.get(currFilesIndex).getValue1()) {
-                    resTasks.get(currTaskIndex).add(
+                    resTasks.get(resTasks.size() - 1).add(
                             new Triplet<String, Long, Long>(
                                     files.get(currFilesIndex).getValue0(),
                                     currFileBytesIndex,
@@ -114,9 +111,7 @@ class TaskPlannerImpl implements TaskPlanner {
                 nextFileBytesChank = files.get(currFilesIndex)
                         .getValue1() - currFileBytesIndex;
                 currPos += nextFileBytesChank;
-                log.info("currentTaskIndex: {}", currTaskIndex);
-                log.info("resTasks.size: {}", resTasks.size());
-                resTasks.get(currTaskIndex).add(
+                resTasks.get(resTasks.size() - 1).add(
                         new Triplet<String, Long, Long>(
                                 files.get(currFilesIndex).getValue0(),
                                 currFileBytesIndex,
