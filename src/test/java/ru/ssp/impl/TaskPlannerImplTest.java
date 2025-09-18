@@ -55,21 +55,42 @@ public class TaskPlannerImplTest {
     }
 
     @Test
-    void generateReturnsTasksToOneThread() {
+    void checkGenerateReturnTasks() {
         final int nThread = 5;
         final long minBytesOnThreadLimit = 2000;
         planner.setLimit(minBytesOnThreadLimit);
         final List<Pair<String, Long>> files = List.of(
                 new Pair<>("file1", 100L),
                 new Pair<>("file2", 200L),
-                new Pair<>("file3", 140L));
+                new Pair<>("file3", 141L));
         final long sumSize = planner.calcSumSize(files);
-        assertEquals(440L, sumSize);
-        final long eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(441L, sumSize);
+        long eThreads;
+        /*
+        // суммарный объем файлов меньше чем лимит на один поток
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
-        var expected = planner.generateTasks(files, sumSize, eThreads);
-        assertThat(expected).size().isEqualTo(1);
+        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        // суммарный объем файлов равен лимиту на один поток
+        planner.setLimit(sumSize);
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(1L, eThreads);
+        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        // суммарный объем файлов больше лимита на один поток
+        planner.setLimit(sumSize/2 + 1);
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(1L, eThreads);
+        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        */
+        // суммарный объем файлов больше лимита на два потока
+        planner.setLimit(sumSize/3 + 1);
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(2L, eThreads);
+        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(2);
+        // суммарный объем файлов больше лимита на общее ограничения количества потоков
+
     }
+
     /*
      *
      *

@@ -114,6 +114,8 @@ class TaskPlannerImpl implements TaskPlanner {
                 nextFileBytesChank = files.get(currFilesIndex)
                         .getValue1() - currFileBytesIndex;
                 currPos += nextFileBytesChank;
+                log.info("currentTaskIndex: {}", currTaskIndex);
+                log.info("resTasks.size: {}", resTasks.size());
                 resTasks.get(currTaskIndex).add(
                         new Triplet<String, Long, Long>(
                                 files.get(currFilesIndex).getValue0(),
