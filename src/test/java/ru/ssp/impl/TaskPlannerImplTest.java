@@ -102,7 +102,45 @@ public class TaskPlannerImplTest {
         List<List<Triplet<String, Long, Long>>> tasks4 = planner.generateTasks(files, sumSize, eThreads);
         log.info("case 4 tasks: {}", tasks4);
         assertThat(tasks4).size().isEqualTo(2);
+        // суммарный объем файлов больше лимита на три потока
+        planner.setLimit(sumSize / 4 + 10);
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertEquals(3L, eThreads);
+        List<List<Triplet<String, Long, Long>>> tasks5 = planner.generateTasks(files, sumSize, eThreads);
+        log.info("case 5 tasks: {}", tasks5);
+        assertThat(tasks5).size().isEqualTo(3);
+        // [[[file1, 0, 99], [file2, 0, 46]], [[file2, 47, 192]], [[file2, 193, 199],
+        // [file3, 0, 138], [file3, 139, 140]]]
+        List<List<Triplet<String, Long, Long>>> expected5 = List.of(
+                List.of(
+                        new Triplet<String, Long, Long>("file1", 0L, 99L),
+                        new Triplet<String, Long, Long>("file2", 0L, 46L)),
+                List.of(
+                        new Triplet<String, Long, Long>("file2", 47L, 192L)),
+                List.of(
+                        new Triplet<String, Long, Long>("file2", 193L, 199L),
+                        new Triplet<String, Long, Long>("file3", 0L, 138L),
+                        new Triplet<String, Long, Long>("file3", 139L, 140L))
+        );
+        assertThat(tasks5).containsExactlyInAnyOrderElementsOf(expected5);
         // файл большого объема должен быть распределен по потокам
     }
 
+    @Test
+    void checkGenerateReturnTasksWhenBigFile() {
+        final int nThread = 5;
+        final long minBytesOnThreadLimit = 2000;
+        planner.setLimit(minBytesOnThreadLimit);
+        final List<Pair<String, Long>> files = List.of(
+                new Pair<>("file1", 10000000L),
+                new Pair<>("file2", 200L),
+                new Pair<>("file3", 141L));
+        final long sumSize = planner.calcSumSize(files);
+        long eThreads;
+        eThreads = planner.calcEffectiveThreads(sumSize, nThread);
+        assertThat(eThreads).isEqualTo(5);
+        var result = planner.generateTasks(files, sumSize, eThreads);
+        log.info("result = {}", result);
+        assertThat(result).size().isEqualTo(5);
+    }         
 }

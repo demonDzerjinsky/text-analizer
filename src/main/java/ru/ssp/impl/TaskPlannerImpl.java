@@ -82,8 +82,12 @@ class TaskPlannerImpl implements TaskPlanner {
             String currentFileName = files.get(currFilesIndex).getValue0();
             long currentFileSize = files.get(currFilesIndex).getValue1();
             if (currPos == nextPos) {
-                resTasks.add(new ArrayList<>());
-                nextPos = Math.min(currPos + lastPosInThread, lastPos);
+                if (currPos + lastPosInThread <= lastPos) {
+                    resTasks.add(new ArrayList<>());
+                    nextPos = currPos + lastPosInThread;
+                } else {
+                    nextPos = lastPos;
+                }
             }
             long chankSize = nextPos - currPos;
             if (currFileBytesIndex + chankSize < currentFileSize) {
