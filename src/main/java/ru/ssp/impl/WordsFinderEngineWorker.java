@@ -17,7 +17,7 @@ import ru.ssp.exceptions.WordsFinderExecutionException;
 class WordsFinderEngineWorker implements FindWords {
 
     /**
-     * поскавщик данных перечня файлов.
+     * поставщик данных перечня файлов.
      */
     private final DirectoryScanner dscanner;
     /**

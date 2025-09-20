@@ -5,10 +5,13 @@ import java.util.List;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * выполняет пул задач в многопоточном режиме
  * и формирует отчет по TOP слов.
  */
+@Slf4j
 class TaskExecutorImpl implements TaskExecutor {
 
     /**
@@ -23,6 +26,7 @@ class TaskExecutorImpl implements TaskExecutor {
             final List<List<Triplet<String, Long, Long>>> tasks,
             final int nWord,
             final int nThread) {
+        log.info("tasks = {}", tasks);
         throw new UnsupportedOperationException();
     }
 
