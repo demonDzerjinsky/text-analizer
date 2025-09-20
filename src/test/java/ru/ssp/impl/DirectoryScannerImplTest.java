@@ -23,9 +23,14 @@ public class DirectoryScannerImplTest {
     @Test
     void scanReturnsNonEmptyListWhenDirNotEmpty() {
         var result = scanner.scanDir("./resources/folder");
-        final List<Pair<String, Long>> expected = List.of(new Pair<String, Long>("./resources/folder/file1.txt", 22L));
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+        final List<Pair<String, Long>> expected = List
+                .of(new Pair<String, Long>("./resources/folder/file1.txt", 10008L),
+                        new Pair<String, Long>("./resources/folder/file2.txt", 10076L),
+                        new Pair<String, Long>("./resources/folder/file3.txt", 10071L),
+                        new Pair<String, Long>("./resources/folder/file4.txt", 10063L),
+                        new Pair<String, Long>("./resources/folder/file5.txt", 9748L));
         log.info(result.toString());
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
