@@ -17,10 +17,6 @@ class TaskPlannerImpl implements TaskPlanner {
     /**
      * сообщение ошибки.
      */
-    private static final String SOMETHING_WRONG = "something wrong";
-    /**
-     * сообщение ошибки.
-     */
     private static final String ZERO_SIZED_FILES = "0 - sized files";
     /**
      * сообщение ошибки.
@@ -75,37 +71,42 @@ class TaskPlannerImpl implements TaskPlanner {
             final long sumFilesSize,
             final long effectiveThreads) {
         final long bytesPerThread = sumFilesSize / effectiveThreads;
-        long currPos = 1;
+        final var resTasks = new ArrayList<List<Triplet<String, Long, Long>>>();
+        long currPos = 0;
         long nextPos = 0;
+        long lastPos = sumFilesSize - 1;
+        long lastPosInThread = bytesPerThread - 1;
         int currFilesIndex = 0;
         long currFileBytesIndex = 0;
-        var resTasks = new ArrayList<List<Triplet<String, Long, Long>>>();
-        while (currPos < sumFilesSize) {
-            resTasks.add(new ArrayList<>());
-            nextPos = Math.min(currPos + bytesPerThread, sumFilesSize);
-            while (currPos < nextPos) {
-                long nextFileBytesChank = nextPos - currPos;
-                var mabyOffset = currFileBytesIndex + nextFileBytesChank;
-                if (mabyOffset < files.get(currFilesIndex).getValue1()) {
-                    resTasks.get(resTasks.size() - 1).add(
-                            new Triplet<String, Long, Long>(
-                                    files.get(currFilesIndex).getValue0(),
-                                    currFileBytesIndex,
-                                    currFileBytesIndex + nextFileBytesChank));
-                    currFileBytesIndex += nextFileBytesChank;
-                    currPos = nextPos;
-                    break;
-                }
-                nextFileBytesChank = files.get(currFilesIndex)
-                        .getValue1() - currFileBytesIndex;
-                currPos += nextFileBytesChank;
-                resTasks.get(resTasks.size() - 1).add(
-                        new Triplet<String, Long, Long>(
-                                files.get(currFilesIndex).getValue0(),
-                                currFileBytesIndex,
-                                files.get(currFilesIndex).getValue1()));
-                currFilesIndex++;
+        while (currPos < lastPos) {
+            String currentFileName = files.get(currFilesIndex).getValue0();
+            long currentFileSize = files.get(currFilesIndex).getValue1();
+            if (currPos == nextPos) {
+                resTasks.add(new ArrayList<>());
+                nextPos = Math.min(currPos + lastPosInThread, lastPos);
+            }
+            long chankSize = nextPos - currPos;
+            if (currFileBytesIndex + chankSize < currentFileSize) {
+                resTasks.get(resTasks.size() - 1)
+                        .add(new Triplet<String, Long, Long>(
+                                currentFileName,
+                                currFileBytesIndex == 0
+                                        ? 0
+                                        : currFileBytesIndex + 1,
+                                currFileBytesIndex + chankSize));
+                currFileBytesIndex += chankSize;
+                currPos = nextPos;
+            } else {
+                resTasks.get(resTasks.size() - 1)
+                        .add(new Triplet<String, Long, Long>(
+                                currentFileName,
+                                currFileBytesIndex == 0
+                                        ? 0
+                                        : currFileBytesIndex + 1,
+                                currentFileSize - 1));
+                currPos += currentFileSize - currFileBytesIndex;
                 currFileBytesIndex = 0;
+                currFilesIndex++;
             }
         }
         return resTasks;

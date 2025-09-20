@@ -78,24 +78,31 @@ public class TaskPlannerImplTest {
                 new Triplet<String, Long, Long>("file1", 0L, 99L),
                 new Triplet<String, Long, Long>("file2", 0L, 199L),
                 new Triplet<String, Long, Long>("file3", 0L, 140L)));
-        assertThat(tasks1).containsExactlyInAnyOrderElementsOf(expected1);
-
         log.info("case 1 tasks: {}", tasks1);
+        assertThat(tasks1).containsExactlyInAnyOrderElementsOf(expected1);
         // суммарный объем файлов равен лимиту на один поток
         planner.setLimit(sumSize);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
-        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        List<List<Triplet<String, Long, Long>>> tasks2 = planner.generateTasks(files, sumSize, eThreads);
+        log.info("case 2 tasks: {}", tasks2);
+        assertThat(tasks2).containsExactlyInAnyOrderElementsOf(expected1);
         // суммарный объем файлов больше лимита на один поток
         planner.setLimit(sumSize / 2 + 1);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
-        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        List<List<Triplet<String, Long, Long>>> tasks3 = planner.generateTasks(files, sumSize, eThreads);
+        log.info("case 3 tasks: {}", tasks3);
+        assertThat(tasks3).size().isEqualTo(1);
+        assertThat(tasks3).containsExactlyInAnyOrderElementsOf(expected1);
         // суммарный объем файлов больше лимита на два потока
         planner.setLimit(sumSize / 3 + 10);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(2L, eThreads);
-        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(2);
+        List<List<Triplet<String, Long, Long>>> tasks4 = planner.generateTasks(files, sumSize, eThreads);
+        log.info("case 4 tasks: {}", tasks4);
+        assertThat(tasks4).size().isEqualTo(2);
+        // файл большого объема должен быть распределен по потокам
     }
 
 }
