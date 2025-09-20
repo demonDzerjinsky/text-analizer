@@ -25,7 +25,7 @@ public class DirectoryScannerImplTest {
         var result = scanner.scanDir("./resources/folder");
         final List<Pair<String, Long>> expected = List.of(new Pair<String, Long>("./resources/folder/file1.txt", 22L));
         assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
-        // log.info(result.toString());
+        log.info(result.toString());
     }
 
     @Test
