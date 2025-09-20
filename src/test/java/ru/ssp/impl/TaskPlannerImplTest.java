@@ -7,9 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class TaskPlannerImplTest {
 
     private TaskPlannerImpl planner;
@@ -69,19 +73,26 @@ public class TaskPlannerImplTest {
         // суммарный объем файлов меньше чем лимит на один поток
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
-        assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
+        List<List<Triplet<String, Long, Long>>> tasks1 = planner.generateTasks(files, sumSize, eThreads);
+        List<List<Triplet<String, Long, Long>>> expected1 = List.of(List.of(
+                new Triplet<String, Long, Long>("file1", 0L, 99L),
+                new Triplet<String, Long, Long>("file2", 0L, 199L),
+                new Triplet<String, Long, Long>("file3", 0L, 140L)));
+        assertThat(tasks1).containsExactlyInAnyOrderElementsOf(expected1);
+
+        log.info("case 1 tasks: {}", tasks1);
         // суммарный объем файлов равен лимиту на один поток
         planner.setLimit(sumSize);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
         assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
         // суммарный объем файлов больше лимита на один поток
-        planner.setLimit(sumSize/2 + 1);
+        planner.setLimit(sumSize / 2 + 1);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(1L, eThreads);
         assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(1);
         // суммарный объем файлов больше лимита на два потока
-        planner.setLimit(sumSize/3 + 10);
+        planner.setLimit(sumSize / 3 + 10);
         eThreads = planner.calcEffectiveThreads(sumSize, nThread);
         assertEquals(2L, eThreads);
         assertThat(planner.generateTasks(files, sumSize, eThreads)).size().isEqualTo(2);
