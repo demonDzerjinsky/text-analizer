@@ -7,7 +7,7 @@ import org.javatuples.Pair;
 public interface ThreadWordsAnalizer extends Runnable {
 
     /**
-     * получить результат выполнения анализа.
+     * получить результат выполнения потока.
      *
      * @return рейтинг слов по результату выполнения на текущем потоке.
      */
