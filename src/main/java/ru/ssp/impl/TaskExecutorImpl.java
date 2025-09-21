@@ -84,7 +84,7 @@ class TaskExecutorImpl implements TaskExecutor {
             final List<ThreadWordsAnalizer> threads = new ArrayList<>();
             tasks.forEach(t -> threads.add(
                     new ThreadWordsAnalizerImpl(latch, t, nWord)));
-            threads.forEach(Runnable::run);
+            threads.forEach(t -> new Thread(t).start());
             log.info(MSG_WAIT_THREAD);
             latch.await();
             return of(threads);
