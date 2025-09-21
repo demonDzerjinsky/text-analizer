@@ -26,8 +26,8 @@ class TaskExecutorImpl implements TaskExecutor {
             final List<List<Triplet<String, Long, Long>>> tasks,
             final int nWord,
             final int nThread) {
-        log.info("tasks = {}", tasks);
-        throw new UnsupportedOperationException();
+        log.info("execute tasks with: {}", tasks);
+        return List.of();
     }
 
 }

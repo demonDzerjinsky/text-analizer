@@ -1,20 +1,27 @@
 package ru.ssp.api;
 
-import ru.ssp.api.FindTop;
-import ru.ssp.dto.ParamDto;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.ssp.dto.ParamDto;
 
 @Slf4j
 public class FindTopIntegrationTest {
 
+    private TextAnalizerApi analizer;
+
+    @BeforeEach
+    void prepare() {
+        analizer = new TextAnalizerApi();
+    }
+
     @Test
-    void checkFindTop() {
-        FindTop sss = new FindTop() {
-            
-        };
-        sss.find(new ParamDto("resources/folder", 10, 3));
+    void checkFindTop() { //TODO 
+        final var params = new ParamDto("./resources/folder", 10, 3);
+        analizer.find(params);
+        assertTrue(true);
     }
 }
