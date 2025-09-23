@@ -14,6 +14,5 @@ abstract class ThreadReport {
      * хранит статистику слов.
      */
     @Getter
-    private final Map<String, Integer> wordCountMap = new HashMap<>();
-    // TODO заменить на мутабельный счетчик
+    private final Map<String, MutableCounter> wordCountMap = new HashMap<>();
 }
