@@ -1,7 +1,11 @@
 package ru.ssp.impl;
 
+import static java.util.Optional.of;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 
@@ -44,7 +48,9 @@ class TaskExecutorImpl implements TaskExecutor {
     @Override
     public Optional<List<Pair<String, Integer>>> execute(
             final List<String> fls, final int wds, final int ths) {
-        return launch(fls, ths).flatMap(t -> merge(t, wds));
+        return launch(fls, ths)
+                .flatMap(this::merge)
+                .flatMap(m -> this.getTop(m, wds));
     }
 
     /**
@@ -77,11 +83,31 @@ class TaskExecutorImpl implements TaskExecutor {
      * сливает результаты в один отчет.
      *
      * @param threadResults коллекция объектов-отчетов из отработавших потоков
-     * @param wds           количество слов в требуемом отчете
-     * @return суммарный отчет
+     * @return суммарная карта статистики слов
      */
-    Optional<List<Pair<String, Integer>>> merge(
-            final List<ThreadReport> threadResults, final int wds) {
+    Optional<Map<String, Integer>> merge(
+            final List<ThreadReport> threadResults) {
+        return of(threadResults.stream()
+                .flatMap(r -> r.getReport().entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (v1, v2) -> v1 + v2)));
+    }
+
+    /**
+     * определяет top-N слов.
+     * кастомный метод, снижаем вычислительную сложность - уходим от
+     * полных сортировок и определяем элементы в один проход.
+     *
+     * @param mergedMap полная карта статистики всех слов
+     * @param wds       количество TopN по скольки построить отчет
+     * @return отчет TopN
+     */
+    Optional<List<Pair<String, Integer>>> getTop(
+            final Map<String, Integer> mergedMap,
+            final int wds) {
         return Optional.empty();
     }
+
 }
