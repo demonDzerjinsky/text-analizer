@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.javatuples.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +24,7 @@ public class DirectoryScannerImplTest {
     void scanReturnsNonEmptyListWhenDirNotEmpty() {
         var result = scanner.scanDir("./resources/folder");
         final List<String> expected = of(
-                "./resources/folder/file1.txt",
-                "./resources/folder/file2.txt",
-                "./resources/folder/file3.txt",
-                "./resources/folder/file4.txt",
-                "./resources/folder/file5.txt");
+                "file1.txt", "file2.txt", "file3.txt", "file4.txt", "file5.txt");
         log.info(result.toString());
         assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
     }

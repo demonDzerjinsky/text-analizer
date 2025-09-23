@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
 import ru.ssp.exceptions.WordsFinderConcurrentException;
-import ru.ssp.exceptions.WordsFinderExecutionException;
 
 /**
  * входная точка в импементацию API.
@@ -49,7 +48,7 @@ public final class WordsFinder {
      * @exception WordsFinderConcurrentException
      */
     @SneakyThrows
-    public static ResultDto find(final ParamDto findParam) {
+    public static Optional<ResultDto> find(final ParamDto findParam) {
         if (!lock.tryLock(1, TimeUnit.SECONDS)) {
             throw new WordsFinderConcurrentException();
         }
@@ -74,14 +73,11 @@ public final class WordsFinder {
      * @param param входные параметры для выполнения поиска
      * @return результат выполнения поиска
      */
-    ResultDto execute(final ParamDto param) {
+    Optional<ResultDto> execute(final ParamDto param) {
         return validate(param)
-                .flatMap(p -> finderEngine.find(
-                        p.srcDir(),
-                        p.nWords(),
-                        p.nThreads()))
-                .map(ResultDto::new)
-                .orElseThrow(() -> new WordsFinderExecutionException(""));
+                .flatMap(p -> finderEngine
+                        .find(p.srcDir(), p.nWords(), p.nThreads()))
+                .map(ResultDto::new);
     }
 
     private Optional<ParamDto> validate(final ParamDto param) {

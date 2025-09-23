@@ -1,5 +1,7 @@
 package ru.ssp.api;
 
+import java.util.Optional;
+
 import ru.ssp.dto.ParamDto;
 import ru.ssp.dto.ResultDto;
 import ru.ssp.impl.WordsFinder;
@@ -16,7 +18,7 @@ public interface FindTop {
      * @param findParam параметры вызова с критериями поиска
      * @return отчет по результатам поиска
      */
-    default ResultDto find(final ParamDto findParam) {
+    default Optional<ResultDto> find(final ParamDto findParam) {
         return WordsFinder.find(findParam);
     }
 }

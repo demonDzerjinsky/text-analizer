@@ -30,10 +30,8 @@ class WordsFinderEngineWorker implements FindWords {
     }
 
     @Override
-    public Optional<List<Pair<String, Integer>>> find(
-            final String dir,
-            final int nWords,
-            final int nThreads) {
+    public Optional<List<Pair<String, Integer>>> find(final String dir,
+            final int nWords, final int nThreads) {
         return of(scnr.scanDir(dir))
                 .flatMap(fls -> exctr.execute(fls, nWords, nThreads));
     }

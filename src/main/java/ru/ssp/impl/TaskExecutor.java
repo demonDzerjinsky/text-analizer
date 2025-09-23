@@ -9,6 +9,6 @@ import org.javatuples.Pair;
  * выполняет анализ.
  */
 interface TaskExecutor {
-    Optional<List<Pair<String, Integer>>> execute(
-            List<String> fls, int wds, int ths);
+    Optional<List<Pair<String, Integer>>> execute(List<String> fls,
+            int wds, int ths);
 }

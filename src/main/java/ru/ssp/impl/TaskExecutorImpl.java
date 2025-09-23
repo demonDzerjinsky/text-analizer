@@ -1,21 +1,11 @@
 package ru.ssp.impl;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.ssp.core.ThreadWordsAnalizer;
-import ru.ssp.core.impl.ThreadWordsAnalizerImpl;
-import ru.ssp.exceptions.NullResultInTaskExecutor;
-import ru.ssp.exceptions.TaskExecutorInterruptedException;
 
 /**
  * выполняет обработку файлов в многопоточном режиме
@@ -62,9 +52,9 @@ class TaskExecutorImpl implements TaskExecutor {
      *
      * @param fls коллекция файлов
      * @param ths количество потоков
-     * @return коллекция потоков завершивших анализ
+     * @return коллекция объектов на которых потоки завершили выполнение
      */
-    Optional<List<ThreadWordsAnalizer>> launch(
+    Optional<List<ThreadReport>> launch(
             final List<String> fls, final int ths) {
         // todo не забыть определить эфективное количество потоков
         return Optional.empty();
@@ -86,12 +76,12 @@ class TaskExecutorImpl implements TaskExecutor {
     /**
      * сливает результаты в один отчет.
      *
-     * @param threadResults коллекция объектов из отработавших потоков
+     * @param threadResults коллекция объектов-отчетов из отработавших потоков
      * @param wds           количество слов в требуемом отчете
      * @return суммарный отчет
      */
     Optional<List<Pair<String, Integer>>> merge(
-            final List<ThreadWordsAnalizer> threadResults, final int wds) {
+            final List<ThreadReport> threadResults, final int wds) {
         return Optional.empty();
     }
 }
