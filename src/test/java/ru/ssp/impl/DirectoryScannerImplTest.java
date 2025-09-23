@@ -1,5 +1,6 @@
 package ru.ssp.impl;
 
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,12 +24,12 @@ public class DirectoryScannerImplTest {
     @Test
     void scanReturnsNonEmptyListWhenDirNotEmpty() {
         var result = scanner.scanDir("./resources/folder");
-        final List<Pair<String, Long>> expected = List
-                .of(new Pair<String, Long>("./resources/folder/file1.txt", 10008L),
-                        new Pair<String, Long>("./resources/folder/file2.txt", 10076L),
-                        new Pair<String, Long>("./resources/folder/file3.txt", 10071L),
-                        new Pair<String, Long>("./resources/folder/file4.txt", 10063L),
-                        new Pair<String, Long>("./resources/folder/file5.txt", 9748L));
+        final List<String> expected = of(
+                "./resources/folder/file1.txt",
+                "./resources/folder/file2.txt",
+                "./resources/folder/file3.txt",
+                "./resources/folder/file4.txt",
+                "./resources/folder/file5.txt");
         log.info(result.toString());
         assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
     }
@@ -42,6 +43,5 @@ public class DirectoryScannerImplTest {
     @Test
     void scanThrowsWhenDirNotExists() {
         var ex = assertThrows(RuntimeException.class, () -> scanner.scanDir("any"));
-        // log.info(ex.getMessage(), ex);
     }
 }

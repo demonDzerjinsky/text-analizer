@@ -18,7 +18,7 @@ import ru.ssp.exceptions.NullResultInTaskExecutor;
 import ru.ssp.exceptions.TaskExecutorInterruptedException;
 
 /**
- * выполняет пул задач в многопоточном режиме
+ * выполняет обработку файлов в многопоточном режиме
  * и формирует отчет по TOP слов.
  */
 @Slf4j
@@ -27,7 +27,7 @@ class TaskExecutorImpl implements TaskExecutor {
     /**
      * сообщение в лог.
      */
-    private static final String MSG_START_THREAD
+    private static final String MSG_START_THREADS
 
             = "Start analize in {} threads ...";
     /**
@@ -44,67 +44,54 @@ class TaskExecutorImpl implements TaskExecutor {
             = "nThread anf tasks size not equals";
 
     /**
-     * выполняет пул задач.
+     * выполняет.
      *
-     * @param tasks   пул задач сформированных для {@code nThread} потоков
-     * @param nWord   параметр количества слов в отчете
-     * @param nThread параметр количества потоков
+     * @param fls коллекция файлов для обработки
+     * @param wds параметр количества слов в отчете
+     * @param ths параметр количества потоков
      * @return общий отчет
      */
     @Override
-    public List<Pair<String, Integer>> executeTasks(
-            final List<List<Triplet<String, Long, Long>>> tasks,
-            final int nWord,
-            final int nThread) {
-        log.debug("execute tasks with: {}", tasks);
-        return launchThreads(tasks, nWord, nThread)
-                .flatMap(this::mergeThreadResults)
-                .orElseThrow(NullResultInTaskExecutor::new);
+    public Optional<List<Pair<String, Integer>>> execute(
+            final List<String> fls, final int wds, final int ths) {
+        return launch(fls, ths).flatMap(t -> merge(t, wds));
     }
 
     /**
      * распределяет задачи по потокам и дожидается их выполнения.
      *
-     * @param tasks   пул задач на все потоки
-     * @param nWord   параметры отчета - количество слов
-     * @param nThread количество потоков
-     * @return коллекция выполненных потоков
+     * @param fls коллекция файлов
+     * @param ths количество потоков
+     * @return коллекция потоков завершивших анализ
      */
-    Optional<List<ThreadWordsAnalizer>> launchThreads(
-            final List<List<Triplet<String, Long, Long>>> tasks,
-            final int nWord,
-            final int nThread) {
-        try {
-            log.info(MSG_START_THREAD, nThread);
-            if (tasks.size() != nThread) {
-                log.info(ILLEGAL_LAUNCH_ARGS);
-                return empty();
-            }
-            final CountDownLatch latch = new CountDownLatch(nThread);
-            final List<ThreadWordsAnalizer> threads = new ArrayList<>();
-            tasks.forEach(t -> threads.add(
-                    new ThreadWordsAnalizerImpl(latch, t, nWord)));
-            threads.forEach(t -> new Thread(t).start());
-            log.info(MSG_WAIT_THREAD);
-            latch.await();
-            return of(threads);
-        } catch (InterruptedException ie) {
-            throw new TaskExecutorInterruptedException();
-        }
+    Optional<List<ThreadWordsAnalizer>> launch(
+            final List<String> fls, final int ths) {
+        // todo не забыть определить эфективное количество потоков
+        return Optional.empty();
+        // try {
+        // log.info(MSG_START_THREADS, nThread);
+        // final CountDownLatch latch = new CountDownLatch(nThread);
+        // final List<ThreadWordsAnalizer> threads = new ArrayList<>();
+        // tasks.forEach(t -> threads.add(
+        // new ThreadWordsAnalizerImpl(latch, t, nWord)));
+        // threads.forEach(t -> new Thread(t).start());
+        // log.info(MSG_WAIT_THREAD);
+        // latch.await();
+        // return of(threads);
+        // } catch (InterruptedException ie) {
+        // throw new TaskExecutorInterruptedException();
+        // }
     }
 
     /**
-     * объединяет результаты по всем потокам в один отчет.
-     * работа с коллециями фиксированной длины, оценка вычислительной
-     * сложности от объема и количества файлов - O(1), т.е. за константное
-     * время.
+     * сливает результаты в один отчет.
      *
-     * @param threadResults коллекция отработавших потоков
+     * @param threadResults коллекция объектов из отработавших потоков
+     * @param wds           количество слов в требуемом отчете
      * @return суммарный отчет
      */
-    Optional<List<Pair<String, Integer>>> mergeThreadResults(
-            final List<ThreadWordsAnalizer> threadResults) {
-        // TODO
+    Optional<List<Pair<String, Integer>>> merge(
+            final List<ThreadWordsAnalizer> threadResults, final int wds) {
         return Optional.empty();
     }
 }

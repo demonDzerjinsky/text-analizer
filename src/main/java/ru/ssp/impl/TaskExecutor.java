@@ -1,16 +1,14 @@
 package ru.ssp.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
 
 /**
- * выполняет пул задач в заданном количестве потоков.
+ * выполняет анализ.
  */
 interface TaskExecutor {
-    List<Pair<String, Integer>> executeTasks(
-            List<List<Triplet<String, Long, Long>>> tasks,
-            int nWord,
-            int nThread);
+    Optional<List<Pair<String, Integer>>> execute(
+            List<String> fls, int wds, int ths);
 }

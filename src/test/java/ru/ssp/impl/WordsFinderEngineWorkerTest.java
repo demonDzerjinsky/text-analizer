@@ -63,10 +63,10 @@ public class WordsFinderEngineWorkerTest {
             .when(planner).makeTasks(fls, nThreads);
 
     private Consumer<List<List<Triplet<String, Long, Long>>>> executorRet = (tsks) -> Mockito.doReturn(words)
-            .when(executor).executeTasks(tsks, nWords, nThreads);
+            .when(executor).execute(tsks, nWords, nThreads);
 
     private Consumer<List<List<Triplet<String, Long, Long>>>> executionThr = (tsks) -> Mockito
-            .doThrow(RuntimeException.class).when(executor).executeTasks(tsks, nWords, nThreads);
+            .doThrow(RuntimeException.class).when(executor).execute(tsks, nWords, nThreads);
 
     @Test
     void findReturnsResultWhenAllSuccess() {
@@ -79,7 +79,7 @@ public class WordsFinderEngineWorkerTest {
         result.ifPresent(it -> assertThat(it).containsExactlyInAnyOrderElementsOf(words));
         verify(scanner, times(1)).scanDir(dir);
         verify(planner, times(1)).makeTasks(files, nThreads);
-        verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
+        verify(executor, times(1)).execute(tasks, nWords, nThreads);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class WordsFinderEngineWorkerTest {
         assertThrows(WordsFinderExecutionException.class, () -> eWorker.find(dir, nWords, nThreads));
         verify(scanner, times(1)).scanDir(dir);
         verify(planner, times(1)).makeTasks(files, nThreads);
-        verify(executor, times(1)).executeTasks(tasks, nWords, nThreads);
+        verify(executor, times(1)).execute(tasks, nWords, nThreads);
     }
 
 }

@@ -2,17 +2,16 @@ package ru.ssp.impl;
 
 import java.util.List;
 
-import org.javatuples.Pair;
-
 /**
- * собирает информацию о файлах для планировщика задач.
+ * собирает информацию о файлах.
  */
 interface DirectoryScanner {
+
     /**
-     * выполняет сбор метаданных по файлам {@code file-size}.
+     * выполняет сканирование каталога и формирование списка файлов.
      *
      * @param dirName каталог для сканирования
-     * @return метаданные для планировщика задач
+     * @return список файлов
      */
-    List<Pair<String, Long>> scanDir(String dirName);
+    List<String> scanDir(String dirName);
 }

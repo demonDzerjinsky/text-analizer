@@ -6,15 +6,13 @@ import java.util.Optional;
 import org.javatuples.Pair;
 
 /**
- * отвечает за поставку нужных компонент в {@code WordsFinderEngineWorker}.
  * создает {@code WordsFinderEngineWorker} и делегирует ему выполнение.
  */
-class WordsFinderEngine
-        implements FindWords, WordsFinderEngineWorkerBuildAware {
+class WordsFinderEngine implements FindWords,
+        WordsFinderEngineWorkerBuildAware {
 
     /**
-     * реализация интерфейса поиска через создание и вызов
-     * функционального класса.
+     * реализация интерфейса поиска через создание и вызов.
      *
      * @param dir      каталог
      * @param nWords   параметр количества слов
@@ -25,22 +23,16 @@ class WordsFinderEngine
             final String dir,
             final int nWords,
             final int nThreads) {
-        WordsFinderEngineWorker worker = this.create();
-        return worker.find(dir, nWords, nThreads);
+        return createWorker().find(dir, nWords, nThreads);
     }
 
     /**
      * фабричный метод.
-     *
      */
     @Override
-    public WordsFinderEngineWorker create() {
+    public WordsFinderEngineWorker createWorker() {
         final DirectoryScanner dscanner = new DirectoryScannerImpl();
-        final TaskPlanner planner = new TaskPlannerImpl();
         final TaskExecutor executor = new TaskExecutorImpl();
-        final WordsFinderEngineWorker worker = new WordsFinderEngineWorker(
-                dscanner, planner, executor);
-        return worker;
+        return new WordsFinderEngineWorker(dscanner, executor);
     }
-
 }

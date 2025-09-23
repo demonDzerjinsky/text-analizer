@@ -7,36 +7,26 @@ import java.util.Optional;
 
 import org.javatuples.Pair;
 
-import ru.ssp.exceptions.WordsFinderExecutionException;
-
 /**
  * выполняет поиск слов в каталоге по условиям задачи.
- *
- * фасад. верхнеуровневая последовательность шагов.
+ * фасад.
  */
 class WordsFinderEngineWorker implements FindWords {
 
     /**
-     * поставщик данных перечня файлов.
+     * поставщик перечня файлов.
      */
-    private final DirectoryScanner dscanner;
-    /**
-     * формирует задачи разрезая весь объем входных файлов по подзадачам
-     * на поток.
-     */
-    private final TaskPlanner planner;
-    /**
-     * выполняет пул задач в параллельном режиме.
-     */
-    private final TaskExecutor executor;
+    private final DirectoryScanner scnr;
 
-    WordsFinderEngineWorker(
-            final DirectoryScanner pdscanner,
-            final TaskPlanner pplanner,
-            final TaskExecutor pexecutor) {
-        this.dscanner = pdscanner;
-        this.planner = pplanner;
-        this.executor = pexecutor;
+    /**
+     * исполнитель.
+     */
+    private final TaskExecutor exctr;
+
+    WordsFinderEngineWorker(final DirectoryScanner scanner,
+            final TaskExecutor executor) {
+        this.scnr = scanner;
+        this.exctr = executor;
     }
 
     @Override
@@ -44,15 +34,7 @@ class WordsFinderEngineWorker implements FindWords {
             final String dir,
             final int nWords,
             final int nThreads) {
-        try {
-            return of(dscanner.scanDir(dir))
-                    .map(fls -> planner.makeTasks(fls, nThreads))
-                    .map(tsks -> executor.executeTasks(tsks, nWords, nThreads));
-        } catch (Exception e) {
-            throw new WordsFinderExecutionException(
-                    e.getMessage(),
-                    e.getCause());
-        }
+        return of(scnr.scanDir(dir))
+                .flatMap(fls -> exctr.execute(fls, nWords, nThreads));
     }
-
 }

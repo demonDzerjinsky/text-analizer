@@ -12,5 +12,5 @@ interface BuildAware<T> {
      *
      * @return объект класса
      */
-    T create();
+    T createWorker();
 }

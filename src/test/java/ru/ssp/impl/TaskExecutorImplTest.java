@@ -38,7 +38,7 @@ public class TaskExecutorImplTest {
                 List.of(),
                 List.of(),
                 List.of());
-        var result = executor.executeTasks(tasks, 10, 3);
+        var result = executor.execute(tasks, 10, 3);
         assertThat(result).isNotNull();
     }
 
