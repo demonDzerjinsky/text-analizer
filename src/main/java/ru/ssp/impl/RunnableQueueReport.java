@@ -33,9 +33,9 @@ class RunnableQueueReport extends BaseReport
     /**
      * очередь - источник данных для формирования отчета.
      */
-    private final LinkedBlockingQueue queue;
+    private final LinkedBlockingQueue<String> queue;
 
-    RunnableQueueReport(final LinkedBlockingQueue sourceQueue,
+    RunnableQueueReport(final LinkedBlockingQueue<String> sourceQueue,
             final CountDownLatch consumersLatch) {
         this.latch = consumersLatch;
         this.queue = sourceQueue;
