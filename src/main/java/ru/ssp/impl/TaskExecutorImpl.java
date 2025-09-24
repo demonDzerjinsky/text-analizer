@@ -64,9 +64,8 @@ class TaskExecutorImpl implements TaskExecutor {
      * @param ths количество потоков
      * @return коллекция объектов на которых потоки завершили выполнение
      */
-    Optional<List<ThreadReport>> launch(
+    Optional<List<BaseReport>> launch(
             final List<String> fls, final int ths) {
-        // todo не забыть определить эфективное количество потоков
         return Optional.empty();
         // try {
         // log.info(MSG_START_THREADS, nThread);
@@ -90,7 +89,7 @@ class TaskExecutorImpl implements TaskExecutor {
      * @return суммарная карта статистики слов
      */
     Optional<Map<String, Integer>> merge(
-            final List<ThreadReport> threadResults) {
+            final List<BaseReport> threadResults) {
         return of(threadResults.stream()
                 .flatMap(r -> r.getReport().entrySet().stream())
                 .collect(Collectors.toMap(

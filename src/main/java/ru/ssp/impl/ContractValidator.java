@@ -43,7 +43,8 @@ class ContractValidator implements Validator<ParamDto> {
                 || param.srcDir() == null
                 || checkDirIsNotExists(param.srcDir())
                 || param.srcDir().isBlank()
-                || param.nWords() <= 0
+                // имеет смысл начиная с 2 - один читатель и один анализатор
+                || param.nWords() <= 1
                 || param.nWords() > WLIMIT
                 || param.nThreads() <= 0
                 || param.nThreads() > PLIMIT) {
