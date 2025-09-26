@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
@@ -41,6 +43,13 @@ class TaskExecutorImpl implements TaskExecutor {
             = "nThread anf tasks size not equals";
 
     /**
+     * размер буфера обмена.
+     * в последствии можно вынести в конфиг и размер подобрать
+     * под результаты отдельных тестов производительности.
+     */
+    private static final int INT_BUFFERS = 1000;
+
+    /**
      * выполняет.
      *
      * @param fls коллекция файлов для обработки
@@ -61,11 +70,25 @@ class TaskExecutorImpl implements TaskExecutor {
      * распределяет задачи по потокам и дожидается их выполнения.
      *
      * @param fls коллекция файлов
-     * @param ths количество потоков
-     * @return коллекция объектов на которых потоки завершили выполнение
+     * @param ths количество потоков (пока распределение такое - 1 продьюсер,
+     *            остальные {@code ths-1 } - консьюмеры)
+     * @return коллекция построенных потоками отчетов
      */
-    Optional<List<BaseReport>> launch(
-            final List<String> fls, final int ths) {
+    Optional<List<BaseReport>> launch(final List<String> fls, final int ths) {
+        final var queue = new LinkedBlockingQueue<String>(INT_BUFFERS);
+        final int nConsumers = ths - 1;
+        final var latch = new CountDownLatch(nConsumers);
+        final var producer = new RunnableTextFilesQueueProducer(fls, queue);
+        final Thread producerThread = new Thread(producer);
+        final var consumers = new RunnableQueueReport[nConsumers];
+        final Thread[] consumersThreads = new Thread[nConsumers];
+        for (int i = 0; i < nConsumers; i++) {
+            consumers[i] = new RunnableQueueReport(queue, latch);
+            consumersThreads[i] = new Thread(consumers[i]);
+        }
+        // стартуем все консьюмеры каждый в своем потоке
+
+
         return Optional.empty();
         // try {
         // log.info(MSG_START_THREADS, nThread);
@@ -150,8 +173,8 @@ class TaskExecutorImpl implements TaskExecutor {
         for (var entry : rpt) {
             for (int i = 0; i < entry.getValue1().size(); i++) {
                 result.add(
-                    new Pair<String, Integer>(
-                        entry.getValue1().get(i), entry.getValue0()));
+                        new Pair<String, Integer>(
+                                entry.getValue1().get(i), entry.getValue0()));
             }
         }
         return Optional.empty();

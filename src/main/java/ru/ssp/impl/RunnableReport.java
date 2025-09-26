@@ -3,5 +3,5 @@ package ru.ssp.impl;
 /**
  * интерфейс выполнения создания отчета в отдельном потоке.
  */
-public interface RunnableReport extends Runnable {
+interface RunnableReport extends Runnable {
 }

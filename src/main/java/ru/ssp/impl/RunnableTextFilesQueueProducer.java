@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * формирует поток строк из всех файлов в очередь для обработки
  * с возможностью выполнения в отдельном потоке выполнения.
  */
-public class RunnableTextFilesQueueProducer extends TextFilesQueueProducer
+class RunnableTextFilesQueueProducer extends TextFilesQueueProducer
         implements Runnable {
 
     /**

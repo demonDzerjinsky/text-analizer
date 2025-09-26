@@ -15,7 +15,6 @@ class TextFilesQueueProducer extends TextFilesReader
 
     @Override
     public final void publish(final LinkedBlockingQueue<String> queue) {
-        // TODO Auto-generated method stub
 
     }
 

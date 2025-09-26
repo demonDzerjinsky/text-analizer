@@ -12,8 +12,7 @@ import ru.ssp.exceptions.EosReceivedException;
  * выполнения в отдельном потоке.
  */
 @Slf4j
-class RunnableQueueReport extends BaseReport
-        implements RunnableReport {
+class RunnableQueueReport extends BaseReport implements RunnableReport {
 
     /**
      * сообщение при завершении потока.
