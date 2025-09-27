@@ -15,11 +15,11 @@ class TextFilesQueueProducer extends TextFilesReader
 
     @Override
     public final void publish(final LinkedBlockingQueue<String> queue) {
-        this.getAsStream().subscribe(textLine -> {
+        this.getAsStream().subscribe(txt -> {
             try {
-                queue.put(textLine);
+                queue.put(txt);
             } catch (InterruptedException ie) {
-                // даем возможность емиттеру обработать
+                // возвращаем управение эмиттеру с его обработкой прерывания
                 Thread.currentThread().interrupt();
             }
         });
