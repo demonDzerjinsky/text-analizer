@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * формирует поток строк из всех файлов в очередь для обработки
- * с возможностью выполнения в отдельном потоке выполнения.
+ * делает тоже что родитель {@code TextFilesQueueProducer} но
+ * с возможностью выполнения в отдельном потоке Thread-е.
  */
 class RunnableTextFilesQueueProducer extends TextFilesQueueProducer
         implements Runnable {
@@ -23,7 +23,7 @@ class RunnableTextFilesQueueProducer extends TextFilesQueueProducer
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
+        this.publish(this.queue);
     }
 
 }

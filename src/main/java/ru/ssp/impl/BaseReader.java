@@ -1,6 +1,6 @@
 package ru.ssp.impl;
 
-import java.util.stream.Stream;
+import reactor.core.publisher.Flux;
 
 /**
  * базовый класс - источник текстовых строк для анализа.
@@ -12,5 +12,5 @@ abstract class BaseReader {
      *
      * @return поток текстовых строк
      */
-    abstract Stream<String> read();
+    abstract Flux<String> getAsStream();
 }

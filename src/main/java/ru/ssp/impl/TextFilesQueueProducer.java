@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * направляет поток строк из коллекции файлов в очередь.
+ * читает все строки из текстовых файлов и публикует в очередь.
  */
 class TextFilesQueueProducer extends TextFilesReader
         implements QueueProducer {
@@ -15,6 +15,14 @@ class TextFilesQueueProducer extends TextFilesReader
 
     @Override
     public final void publish(final LinkedBlockingQueue<String> queue) {
+        this.getAsStream().subscribe(textLine -> {
+            try {
+                queue.put(textLine);
+            } catch (InterruptedException ie) {
+                // даем возможность емиттеру обработать
+                Thread.currentThread().interrupt();
+            }
+        });
 
     }
 

@@ -67,8 +67,7 @@ public class WordsFinderTest {
 
     @Test
     void executeInvokeFindWhenValidParameters() {
-        doReturn(
-                of(List.of(new Pair<String, Integer>("word", 1))))
+        doReturn(of(List.of(new Pair<String, Integer>("word", 1))))
                 .when(engineMock).find(anyString(), anyInt(), anyInt());
         finder.execute(new ParamDto(".", 2, 1));
         verify(engineMock, times(1))
