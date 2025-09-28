@@ -1,4 +1,4 @@
-package ru.ssp.impl;
+package ru.ssp.executors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -7,10 +7,10 @@ import java.util.Map;
 import ru.ssp.exceptions.EosReceivedException;
 
 /**
- * базовый отчет.
- * предусмотрен контракт наполнения и получения данных отчета.
+ * счетчик статистики слов.
+ * предусмотрен контракт наполнения и получения статистики по словам.
  */
-abstract class BaseReport {
+public abstract class BaseWordsCounter {
 
     /**
      * хранит статистику слов.
@@ -23,7 +23,7 @@ abstract class BaseReport {
      *
      * @return отчет слово - количество повторений, выявленное на потоке
      */
-    final Map<String, Integer> getReport() {
+    public final Map<String, Integer> getWordsCounts() {
         return wordCountMap.entrySet().stream().collect(
             toMap(Map.Entry::getKey, v -> v.getValue().getCount()));
     }
@@ -32,5 +32,5 @@ abstract class BaseReport {
      * наполняет отчет данными.
      * реализация зависит от источника данных.
      */
-    abstract void fillReport() throws EosReceivedException;
+    abstract void countWords() throws EosReceivedException;
 }

@@ -24,15 +24,15 @@ import ru.ssp.exceptions.ContractValidateException;
 
 @ExtendWith({ MockitoExtension.class })
 public class WordsFinderTest {
-    private WordsFinder finder;
+    private ReportTop finder;
     private Validator<ParamDto> validator;
     @Mock
-    private WordsFinderEngine engineMock;
+    private ReportTopBuilderDelegate engineMock;
 
     @BeforeEach
     void prepare() {
-        validator = new ContractValidator();
-        finder = new WordsFinder(validator, engineMock);
+        validator = new ReportTopRequestValidator();
+        finder = new ReportTop(validator, engineMock);
     }
 
     @Test

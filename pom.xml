@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.ssp.demo</groupId>
-    <artifactId>text-analizer</artifactId>
+    <artifactId>text-analyzer</artifactId>
     <version>1.0</version>
 
-    <name>text-analizer</name>
+    <name>text-analyzer</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

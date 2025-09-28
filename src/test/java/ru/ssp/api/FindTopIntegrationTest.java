@@ -21,7 +21,7 @@ public class FindTopIntegrationTest {
     @Test
     void checkFindTop() { //TODO 
         final var params = new ParamDto("./resources/folder", 10, 3);
-        analizer.find(params);
+        analizer.makeReport(params);
         assertTrue(true);
     }
 }

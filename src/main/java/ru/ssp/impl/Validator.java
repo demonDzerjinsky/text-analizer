@@ -1,15 +1,12 @@
 package ru.ssp.impl;
 
+import java.util.Optional;
+
 /**
- * обобщенный интерфейс.
+ * обобщенный интерфейс валидации.
  *
  * @param <T> дженерик-тип
  */
 interface Validator<T> {
-    /**
-     * метод валидации объекта дженерик-типа.
-     *
-     * @param t объект
-     */
-    void validate(T t);
+    Optional<T> validate(T t);
 }

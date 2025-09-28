@@ -5,11 +5,15 @@ import java.util.Optional;
 
 import org.javatuples.Pair;
 
+import ru.ssp.executors.CustomExecutorService;
+import ru.ssp.executors.CustomExecutors;
+
 /**
- * создает {@code WordsFinderEngineWorker} и делегирует ему выполнение.
+ * создает нужную реализацию {@code ReportTopBuilder} и делегирует ей
+ * выполнение.
  */
-class WordsFinderEngine implements FindWords,
-        WordsFinderEngineWorkerBuildAware {
+class ReportTopBuilderDelegate implements ReportTopBuilder,
+        ReportTopBuilderAware {
 
     /**
      * реализация интерфейса поиска через создание и вызов.
@@ -19,20 +23,20 @@ class WordsFinderEngine implements FindWords,
      * @param nThreads параметр количества потоков
      */
     @Override
-    public Optional<List<Pair<String, Integer>>> find(
+    public Optional<List<Pair<String, Integer>>> buildReport(
             final String dir,
             final int nWords,
             final int nThreads) {
-        return createWorker().find(dir, nWords, nThreads);
+        return create().buildReport(dir, nWords, nThreads);
     }
 
     /**
      * фабричный метод.
      */
     @Override
-    public WordsFinderEngineWorker createWorker() {
+    public ReportTopBuilder create() {
         final DirectoryScanner dscanner = new DirectoryScannerImpl();
-        final TaskExecutor executor = new TaskExecutorImpl();
-        return new WordsFinderEngineWorker(dscanner, executor);
+        final CustomExecutorService executor = CustomExecutors.newOneReaderManyConsumesExecutor();
+        return new ReportTopBuilderImpl(dscanner, executor);
     }
 }

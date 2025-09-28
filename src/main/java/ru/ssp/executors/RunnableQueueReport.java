@@ -1,4 +1,4 @@
-package ru.ssp.impl;
+package ru.ssp.executors;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -7,12 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import ru.ssp.exceptions.EosReceivedException;
 
 /**
- * отчет, формируемый из источника-очереди.
- * консьюмер, читает очередь и формирует отчет с возможностью
- * выполнения в отдельном потоке.
+ * счетчик статистики слов из потока строк в очереди.
+ * консьюмер, читает очередь и ведет подсчет количества слов.
+ * поддерживает возможность выполнения в отдельном потоке.
  */
 @Slf4j
-class RunnableQueueReport extends BaseReport implements RunnableReport {
+class RunnableQueueReport extends BaseWordsCounter implements Runnable {
 
     /**
      * сообщение при завершении потока.
@@ -25,12 +25,12 @@ class RunnableQueueReport extends BaseReport implements RunnableReport {
     private static final String END_OF_STREAM = "thread received <EOS>";
 
     /**
-     * общая защелка выполнения всех консьюмеров.
+     * блокировка для синхронизации завершения.
      */
     private final CountDownLatch latch;
 
     /**
-     * очередь - источник данных для формирования отчета.
+     * очередь - источник данных для подсчета статистики.
      */
     private final LinkedBlockingQueue<String> queue;
 
@@ -43,7 +43,7 @@ class RunnableQueueReport extends BaseReport implements RunnableReport {
     @Override
     public void run() {
         try {
-            fillReport();
+            this.countWords();
         } catch (EosReceivedException ex) {
             log.debug(END_OF_STREAM);
         } finally {
@@ -53,8 +53,7 @@ class RunnableQueueReport extends BaseReport implements RunnableReport {
     }
 
     @Override
-    void fillReport() throws EosReceivedException {
-        // TODO Auto-generated method stub
-
+    void countWords() throws EosReceivedException {
+        // TODO
     }
 }

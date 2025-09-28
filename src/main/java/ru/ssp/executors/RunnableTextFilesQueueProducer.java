@@ -1,4 +1,4 @@
-package ru.ssp.impl;
+package ru.ssp.executors;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;

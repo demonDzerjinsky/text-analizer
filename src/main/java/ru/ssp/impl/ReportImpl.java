@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 import org.javatuples.Pair;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.ssp.executors.BaseWordsCounter;
 
 /**
- * выполняет обработку файлов в многопоточном режиме
- * и формирует отчет по TOP слов.
+ * выполняет формирование отчета.
  */
 @Slf4j
-class TaskExecutorImpl implements TaskExecutor {
+class ReportImpl implements Report {
 
     /**
      * сообщение в лог.
@@ -67,28 +67,27 @@ class TaskExecutorImpl implements TaskExecutor {
     }
 
     /**
-     * распределяет задачи по потокам и дожидается их выполнения.
+     * выполняет обработку файлов.
      *
      * @param fls коллекция файлов
-     * @param ths количество потоков (пока распределение такое - 1 продьюсер,
-     *            остальные {@code ths-1 } - консьюмеры)
+     * @param ths количество потоков
      * @return коллекция построенных потоками отчетов
+     * Executors
      */
-    Optional<List<BaseReport>> launch(final List<String> fls, final int ths) {
-        final var queue = new LinkedBlockingQueue<String>(INT_BUFFERS);
-        final int nConsumers = ths - 1;
-        final var latch = new CountDownLatch(nConsumers);
-        final var producer = new RunnableTextFilesQueueProducer(fls, queue);
-        final Thread producerThread = new Thread(producer);
-        final var consumers = new RunnableQueueReport[nConsumers];
-        final Thread[] consumersThreads = new Thread[nConsumers];
-        for (int i = 0; i < nConsumers; i++) {
-            consumers[i] = new RunnableQueueReport(queue, latch);
-            consumersThreads[i] = new Thread(consumers[i]);
-        }
-        // стартуем все консьюмеры каждый в своем потоке
-
-
+    Optional<List<BaseWordsCounter>> launch(final List<String> fls, final int ths) {
+        final CustomExecutorService svc = CustomExecutors.newOneReaderManyConsumersExecutor();
+        Optional<List<BaseWordsCounter>> results = svc.submitAndWait(fls, ths);
+        // final var queue = new LinkedBlockingQueue<String>(INT_BUFFERS);
+        // final int nConsumers = ths - 1;
+        // final var latch = new CountDownLatch(nConsumers);
+        // final var producer = new RunnableTextFilesQueueProducer(fls, queue);
+        // final Thread producerThread = new Thread(producer);
+        // final var consumers = new RunnableQueueReport[nConsumers];
+        // final Thread[] consumersThreads = new Thread[nConsumers];
+        // for (int i = 0; i < nConsumers; i++) {
+        // consumers[i] = new RunnableQueueReport(queue, latch);
+        // consumersThreads[i] = new Thread(consumers[i]);
+        // }
         return Optional.empty();
         // try {
         // log.info(MSG_START_THREADS, nThread);
@@ -112,9 +111,9 @@ class TaskExecutorImpl implements TaskExecutor {
      * @return суммарная карта статистики слов
      */
     Optional<Map<String, Integer>> merge(
-            final List<BaseReport> threadResults) {
+            final List<BaseWordsCounter> threadResults) {
         return of(threadResults.stream()
-                .flatMap(r -> r.getReport().entrySet().stream())
+                .flatMap(r -> r.getWordsCounts().entrySet().stream())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -179,4 +178,5 @@ class TaskExecutorImpl implements TaskExecutor {
         }
         return Optional.empty();
     }
+
 }

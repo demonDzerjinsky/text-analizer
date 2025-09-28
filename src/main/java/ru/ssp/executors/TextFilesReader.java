@@ -1,4 +1,4 @@
-package ru.ssp.impl;
+package ru.ssp.executors;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

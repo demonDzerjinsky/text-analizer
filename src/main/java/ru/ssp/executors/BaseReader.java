@@ -1,4 +1,4 @@
-package ru.ssp.impl;
+package ru.ssp.executors;
 
 import reactor.core.publisher.Flux;
 

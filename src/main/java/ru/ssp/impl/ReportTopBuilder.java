@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.javatuples.Pair;
 
-interface FindWords {
-    Optional<List<Pair<String, Integer>>> find(String dir,
+interface ReportTopBuilder {
+    Optional<List<Pair<String, Integer>>> buildReport(String dir,
             int nWords, int nThreads);
 }
