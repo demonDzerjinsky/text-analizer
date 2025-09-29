@@ -12,7 +12,7 @@ import ru.ssp.exceptions.EosReceivedException;
  * поддерживает возможность выполнения в отдельном потоке.
  */
 @Slf4j
-class RunnableQueueReport extends BaseWordsCounter implements Runnable {
+class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
 
     /**
      * сообщение при завершении потока.
@@ -34,7 +34,7 @@ class RunnableQueueReport extends BaseWordsCounter implements Runnable {
      */
     private final LinkedBlockingQueue<String> queue;
 
-    RunnableQueueReport(final LinkedBlockingQueue<String> sourceQueue,
+    RunnableQueueWordsCounter(final LinkedBlockingQueue<String> sourceQueue,
             final CountDownLatch consumersLatch) {
         this.latch = consumersLatch;
         this.queue = sourceQueue;

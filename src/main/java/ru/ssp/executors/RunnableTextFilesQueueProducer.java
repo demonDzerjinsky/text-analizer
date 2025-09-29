@@ -15,7 +15,8 @@ class RunnableTextFilesQueueProducer extends TextFilesQueueProducer
      */
     private final LinkedBlockingQueue<String> queue;
 
-    RunnableTextFilesQueueProducer(final List<String> fileNames,
+    RunnableTextFilesQueueProducer(
+            final List<String> fileNames,
             final LinkedBlockingQueue<String> dstQueue) {
         super(fileNames);
         this.queue = dstQueue;

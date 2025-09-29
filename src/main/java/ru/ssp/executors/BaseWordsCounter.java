@@ -7,8 +7,10 @@ import java.util.Map;
 import ru.ssp.exceptions.EosReceivedException;
 
 /**
- * счетчик статистики слов.
- * предусмотрен контракт наполнения и получения статистики по словам.
+ * абстрактный счетчик статистики слов.
+ * формирование статистики {@code countWords} зависит от источника
+ * и реализовано в конкретных классах, например при подсчете из
+ * очереди - {@code RunnableQueueWordsCounter}
  */
 public abstract class BaseWordsCounter {
 

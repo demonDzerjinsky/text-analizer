@@ -29,6 +29,11 @@ class TextFilesReader extends BaseReader {
     private final Flux<String> fluxString;
 
     /**
+     * признак окончания потока.
+     */
+    public final static String EOS = "<EOS>";
+
+    /**
      * сообщение ошибки чтения.
      */
     private static final String IO_ERROR = "io error {}";
@@ -39,6 +44,10 @@ class TextFilesReader extends BaseReader {
     private static final String OPEN_FILE_STREAM_ERROR
 
             = "stream open error: {}";
+
+    private static final String READER_TERMINATED
+
+            = "files reader thread is terminated";
 
     /**
      * конструктор.
@@ -72,6 +81,8 @@ class TextFilesReader extends BaseReader {
                 }
                 sink.next(line);
             });
+        } finally {
+            log.debug(READER_TERMINATED);
         }
     }
 
