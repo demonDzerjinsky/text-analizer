@@ -12,24 +12,15 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
 
     /**
      * ограничение по количеству слов.
-     * todo в последствии вынести в конфиг, здесь оставить дефолтные.
+     * todo значение взято для примера, в последствии вынести в конфиг.
      */
     private static final int WLIMIT = 10;
 
     /**
-     * ограничение по количеству потоков.
-     * todo в последствии вынести в конфиг, здесь оставить дефолтные.
-     */
-    private static final int PLIMIT = 5;
-
-    /**
      * проверка параметров входного контракта.
      *
-     * каталог задан и не пробелами
+     * каталог задан и не пробелами и существует
      * количество слов в отчете передано положительным и в пределах ограничений
-     * количество потоков обработки передано положительным числом и больше 2
-     * (в тек реализации исходим из того что 1 читатель и как минимум 1
-     * обработчик, можно больше в пределах {@code PLIMIT - 1})
      *
      * @param param DTO входного контракта
      * @return {@code Optional} с объектом входного контракта в случае успешной
@@ -41,13 +32,12 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
     }
 
     private boolean check(final ReportTopRequestDto o) {
+        // перечисление ошибочных кейсов
         return (o == null
                 || o.srcDir() == null
                 || o.srcDir().isBlank()
                 || o.nWords() <= 1
                 || o.nWords() > WLIMIT
-                || o.nThreads() <= 0
-                || o.nThreads() > PLIMIT
                 || checkDirIsNotExists(o.srcDir()))
                         ? false
                         : true;

@@ -36,11 +36,11 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     }
 
     @Override
-    public Optional<List<Pair<String, Integer>>> buildReport(String dir, int nWords, int nThreads) {
+    public Optional<List<Pair<String, Integer>>> buildReport(String dir, int nWords) {
         return of(dir)
                 .map(scnr::scanDir)
                 // сбор статистики делегируем пулу потоков
-                .flatMap(fls -> exctr.submitAndWait(fls, nThreads))
+                .flatMap(exctr::submitAndWait)
                 // сводим - складываем поученные от потоков статистики
                 .flatMap(this::merge)
                 // выделяем top-слов из общей статистики

@@ -19,16 +19,13 @@ class ReportTopBuilderDelegate implements ReportTopBuilder,
     /**
      * реализация интерфейса поиска через создание и вызов.
      *
-     * @param dir      каталог
-     * @param nWords   параметр количества слов
-     * @param nThreads параметр количества потоков
+     * @param dir    каталог
+     * @param nWords параметр количества слов
      */
     @Override
     public Optional<List<Pair<String, Integer>>> buildReport(
-            final String dir,
-            final int nWords,
-            final int nThreads) {
-        return create().buildReport(dir, nWords, nThreads);
+            final String dir, final int nWords) {
+        return create().buildReport(dir, nWords);
     }
 
     /**

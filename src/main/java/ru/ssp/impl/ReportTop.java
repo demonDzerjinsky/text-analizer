@@ -53,11 +53,7 @@ public final class ReportTop {
      */
     Optional<ReportTopResultDto> execute(final ReportTopRequestDto reportParam) {
         return validator.validate(reportParam)
-                .flatMap(p -> reportBuilder
-                        .buildReport(
-                                p.srcDir(),
-                                p.nWords(),
-                                p.nThreads()))
+                .flatMap(p -> reportBuilder.buildReport(p.srcDir(), p.nWords()))
                 .map(ReportTopResultDto::new);
     }
 
