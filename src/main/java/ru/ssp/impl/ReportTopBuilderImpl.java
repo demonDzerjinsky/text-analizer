@@ -39,8 +39,11 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     public Optional<List<Pair<String, Integer>>> buildReport(String dir, int nWords, int nThreads) {
         return of(dir)
                 .map(scnr::scanDir)
+                // сбор статистики делегируем пулу потоков
                 .flatMap(fls -> exctr.submitAndWait(fls, nThreads))
+                // сводим - складываем поученные от потоков статистики
                 .flatMap(this::merge)
+                // выделяем top-слов из общей статистики
                 .flatMap(m -> this.getTop(m, nWords))
                 .flatMap(this::transform);
     }
@@ -64,8 +67,8 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     /**
      * определяет top-N слов.
      * кастомный метод, снижаем вычислительную сложность - уходим от
-     * полных сортировок больших коллекций и определяем только нужные элементы
-     * в один проход.
+     * полной сортировки большой коллекции и определяем только нужные top-N
+     * элементы в один проход.
      *
      * @param mergedMap полная карта статистики всех слов
      * @param wds       количество TopN по скольки построить отчет

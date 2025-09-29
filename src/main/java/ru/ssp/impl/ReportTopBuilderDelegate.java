@@ -35,8 +35,8 @@ class ReportTopBuilderDelegate implements ReportTopBuilder,
      */
     @Override
     public ReportTopBuilder create() {
-        final DirectoryScanner dscanner = new DirectoryScannerImpl();
+        final DirectoryScanner scanner = new DirectoryScannerImpl();
         final CustomExecutorService executor = CustomExecutors.newOneReaderManyConsumesExecutor();
-        return new ReportTopBuilderImpl(dscanner, executor);
+        return new ReportTopBuilderImpl(scanner, executor);
     }
 }
