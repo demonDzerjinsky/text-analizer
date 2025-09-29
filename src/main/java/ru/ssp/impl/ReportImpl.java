@@ -23,31 +23,6 @@ import ru.ssp.executors.BaseWordsCounter;
 @Slf4j
 class ReportImpl implements Report {
 
-    /**
-     * сообщение в лог.
-     */
-    private static final String MSG_START_THREADS
-
-            = "Start analize in {} threads ...";
-    /**
-     * сообщение в лог.
-     */
-    private static final String MSG_WAIT_THREAD
-
-            = "waiting...";
-    /**
-     * сообщение в лог.
-     */
-    private static final String ILLEGAL_LAUNCH_ARGS
-
-            = "nThread anf tasks size not equals";
-
-    /**
-     * размер буфера обмена.
-     * в последствии можно вынести в конфиг и размер подобрать
-     * под результаты отдельных тестов производительности.
-     */
-    private static final int INT_BUFFERS = 1000;
 
     /**
      * выполняет.

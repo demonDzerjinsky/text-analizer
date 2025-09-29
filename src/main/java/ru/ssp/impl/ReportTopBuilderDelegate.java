@@ -1,12 +1,13 @@
 package ru.ssp.impl;
 
+import static ru.ssp.executors.CustomExecutors.newDefaultExecutor;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.javatuples.Pair;
 
 import ru.ssp.executors.CustomExecutorService;
-import ru.ssp.executors.CustomExecutors;
 
 /**
  * создает нужную реализацию {@code ReportTopBuilder} и делегирует ей
@@ -32,11 +33,18 @@ class ReportTopBuilderDelegate implements ReportTopBuilder,
 
     /**
      * фабричный метод.
+     * использует пул потоков с настройками по умолчанию
+     * {@code CustomExecutors.newDefaultExecutor}.
+     * в последствии можно предусмотреть формирование с настройками из
+     * конфигурационного файла и использовать
+     * {@code CustomExecutors.newConfigurableExecutor} с параметрами
+     * на основе тестов производительности и конфигурации конкретной
+     * платформы.
      */
     @Override
     public ReportTopBuilder create() {
         final DirectoryScanner scanner = new DirectoryScannerImpl();
-        final CustomExecutorService executor = CustomExecutors.newOneReaderManyConsumesExecutor();
+        final CustomExecutorService executor = newDefaultExecutor();
         return new ReportTopBuilderImpl(scanner, executor);
     }
 }

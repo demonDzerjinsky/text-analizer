@@ -6,7 +6,27 @@ package ru.ssp.executors;
  */
 public class CustomExecutors {
 
-    public static CustomExecutorService newOneReaderManyConsumesExecutor() {
-        return new OneReaderManyConsumersExecutor();
+    /**
+     * формирует пул с параметрами по умолчанию.
+     * @return сервис сбора статистики слов
+     */
+    public static CustomExecutorService newDefaultExecutor() {
+        return new OneReaderManyConsumersExecutor.Builder().build();
+    }
+
+    /**
+     * формирует пул с требуемыми параметрами.
+     *
+     * @param buffers размер очереди потока чтения строк
+     * @param threads количество потоков-обработчиков строк
+     * @return сервис сбора статистики слов
+     */
+    public static CustomExecutorService newConfigurableExecutor(
+            final int buffers,
+            final int threads) {
+        return new OneReaderManyConsumersExecutor.Builder()
+                .setBuffers(buffers)
+                .setThreads(threads)
+                .build();
     }
 }
