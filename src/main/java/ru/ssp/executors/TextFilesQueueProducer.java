@@ -31,7 +31,6 @@ class TextFilesQueueProducer extends TextFilesReader
         this.getAsStream().subscribe(txt -> {
             try {
                 queue.put(txt);
-                log.info("published: {}", txt); //todo remove
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }

@@ -17,6 +17,12 @@ import ru.ssp.exceptions.EosReceivedException;
 public abstract class BaseWordsCounter {
 
     /**
+     * считаем за слово последовательность алф-цифр символов начиная
+     * с такого количества символов.
+     */
+    public static final int MIN_WORD_LEN = 3;
+
+    /**
      * хранит статистику слов.
      */
     @Getter
@@ -30,7 +36,7 @@ public abstract class BaseWordsCounter {
      */
     public final Map<String, Integer> getWordsCounts() {
         return wordCountMap.entrySet().stream().collect(
-            toMap(Map.Entry::getKey, v -> v.getValue().getCount()));
+                toMap(Map.Entry::getKey, v -> v.getValue().getCount()));
     }
 
     /**

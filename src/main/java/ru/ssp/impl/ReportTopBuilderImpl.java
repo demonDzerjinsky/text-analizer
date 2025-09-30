@@ -12,12 +12,14 @@ import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ssp.executors.BaseWordsCounter;
 import ru.ssp.executors.CustomExecutorService;
 
 /**
  * построитель отчета TOP слов.
  */
+@Slf4j
 class ReportTopBuilderImpl implements ReportTopBuilder {
 
     /**
@@ -80,7 +82,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
             final Map<String, Integer> mergedMap, final int wds) {
         final LinkedList<Pair<Integer, List<String>>> rpt = new LinkedList<>();
         mergedMap.entrySet().forEach(it -> {
-            if (rpt.size() < wds || rpt.get(0).getValue0() <= it.getValue()) {
+            if (rpt.size() <= wds || rpt.get(0).getValue0() <= it.getValue()) {
                 for (int i = 0; i < wds; i++) {
                     if (i == rpt.size()) {
                         rpt.add(new Pair<Integer, List<String>>(
@@ -97,7 +99,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
                         break;
                     }
                 }
-                while (rpt.size() >= wds) {
+                while (rpt.size() == wds) {
                     rpt.pop();
                 }
             }

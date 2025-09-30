@@ -62,7 +62,7 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
 
     @Override
     void countWords() throws EosReceivedException {
-        final Pattern dp = Pattern.compile("\\s+");
+        final Pattern dp = Pattern.compile("\\W+");
         try {
             while (true) {
                 if (Thread.interrupted()) {
@@ -72,7 +72,10 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
                 if (nextLine.equals(EOS)) {
                     throw new EosReceivedException();
                 }
-                for (String word : dp.split(nextLine)) {
+                for (String word : dp.split(nextLine.toLowerCase())) {
+                    if (word.length() <= MIN_WORD_LEN) {
+                        continue;
+                    }
                     this.getWordCountMap().compute(word,
                             (k, v) -> (v == null) ? new MutCounter() : v).inc();
                 }
@@ -82,4 +85,5 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
+
 }
