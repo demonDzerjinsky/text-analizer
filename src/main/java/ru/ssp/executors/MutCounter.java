@@ -8,7 +8,7 @@ import lombok.Getter;
  * для снижения нагрузки на процессор - не создаем каждый раз
  * при инкременте новый объект в хипе.
  */
-final class MutableCounter {
+final class MutCounter {
 
     /**
      * состояние счетчика.

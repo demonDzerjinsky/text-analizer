@@ -1,7 +1,6 @@
 package ru.ssp.executors;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * интерфейс под разные реализации executor-ов выполняющих
@@ -21,5 +20,5 @@ public interface CustomExecutorService {
      * @param fileNames коллекция файлов
      * @return коллекция результатов по каждому потоку
      */
-    Optional<List<BaseWordsCounter>> submitAndWait(List<String> fileNames);
+    List<BaseWordsCounter> submitAndWait(List<String> fileNames);
 }

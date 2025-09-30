@@ -1,9 +1,9 @@
 package ru.ssp.executors;
 
-import static java.util.Optional.of;
+import static java.util.List.of;
+import static ru.ssp.executors.TextFilesReader.EOS;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -77,19 +77,28 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
 
     }
 
+    /**
+     * выполняет сбор статистики по словам на пуле потоков.
+     * ожидает завершения выполнения всех потоков после чего возвращает
+     * все результаты от каждого обработчика в единой коллекции для
+     * последующего мержа в общую статистику и выделения из нее TOP слов.
+     *
+     * @param fileNames коллекция имен файлов
+     * @return коллекция результатов подсчета статистике на каждом потоке
+     */
     @Override
-    public Optional<List<BaseWordsCounter>> submitAndWait(
+    public List<BaseWordsCounter> submitAndWait(
             final List<String> fileNames) {
         final var queue = new LinkedBlockingQueue<String>(buffers);
-        final var counsumersLatch = new CountDownLatch(threads);
+        final var latch = new CountDownLatch(threads);
         final var producer = new RunnableTextFilesQueueProducer(fileNames, queue);
         final var consumers = new RunnableQueueWordsCounter[threads];
         final Thread tProducer = new Thread(producer);
         final Thread[] tConsumers = new Thread[threads];
-        // инициализируем и запускаем пул обработчиков
-        // консьюмеры встают в ожидании потока строк в очереди
+        // инициализируем и запускаем пул консьюмеров
+        // консьюмеры встают в ожидании потока строк в queue
         for (int i = 0; i < threads; i++) {
-            consumers[i] = new RunnableQueueWordsCounter(queue, counsumersLatch);
+            consumers[i] = new RunnableQueueWordsCounter(queue, latch);
             tConsumers[i] = new Thread(consumers[i]);
             tConsumers[i].start();
         }
@@ -98,30 +107,53 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
         try {
             tProducer.join();
         } catch (InterruptedException ie) {
-            tProducer.interrupt(); // если нас прервали останавливаем продьюсер
+            // если мы были прерваны кидаем сигнал останова продьюсеру
+            // чтобы он мог завершить IO и остановиться на том что успел вычитать
+            tProducer.interrupt();
             Thread.currentThread().interrupt();
         }
-        // под каждого консьюмера отправляем end-of-stream для их завершения
+        // если продьюсер не просто завершился а был кемто или нами прерван
+        // переводим основной поток в состояние - прерван
+        if (tProducer.isInterrupted()) {
+            Thread.currentThread().interrupt();
+        }
+        // после завершения чтения данных в очередь
+        // под каждого консьюмера отправляем end-of-stream в ту же очередь
+        // для их завершения
         for (int i = 0; i < threads; i++) {
             while (true) {
                 try {
-                    queue.put(TextFilesReader.EOS);
+                    queue.put(EOS);
                     break;
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
             }
         }
+        // если текущий поток в состоянии прерван,
+        // результат сбора статистики нас не интересует
         if (Thread.interrupted()) {
+            for (int i = 0; i > threads; i++) {
+                tConsumers[i].interrupt();
+            }
             throw new CustomExecutorInterruptedException();
         }
-        // ждем пока вычитают оставшиеся строки и end-of-stream и завершатся
+        // даем возможность дочитать все что накоплено в очереди
+        // ждем пока все консьюмеры вычитают оставшиеся строки
+        // и последний end-of-stream и завершатся
         try {
-            counsumersLatch.wait();
+            latch.wait();
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new CustomExecutorInterruptedException();
         }
-        return of(List.of(consumers));
+        // если ктото из консьюмеров завершился по прерыванию
+        // результат статистики не достоверен, выходим по исключению
+        for (int i = 0; i < threads; i++) {
+            if (tConsumers[i].isInterrupted()) {
+                throw new CustomExecutorInterruptedException();
+            }
+        }
+        return of(consumers);
     }
 }

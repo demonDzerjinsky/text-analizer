@@ -5,7 +5,7 @@ package ru.ssp.exceptions;
  * end-of-stream.
  */
 public class EosReceivedException extends Exception {
-    EosReceivedException() {
+    public EosReceivedException() {
         super();
     }
 }

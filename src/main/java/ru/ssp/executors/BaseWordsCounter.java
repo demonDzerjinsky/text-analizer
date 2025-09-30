@@ -17,7 +17,7 @@ public abstract class BaseWordsCounter {
     /**
      * хранит статистику слов.
      */
-    private final Map<String, MutableCounter> wordCountMap = new HashMap<>();
+    protected final Map<String, MutCounter> wordCountMap = new HashMap<>();
 
     /**
      * формирует срез финального отчета на потоке
