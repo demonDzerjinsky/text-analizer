@@ -81,9 +81,10 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     Optional<List<Pair<Integer, List<String>>>> getTop(
             final Map<String, Integer> mergedMap, final int wds) {
         final LinkedList<Pair<Integer, List<String>>> rpt = new LinkedList<>();
+        final int lim = wds + 1;
         mergedMap.entrySet().forEach(it -> {
-            if (rpt.size() <= wds || rpt.get(0).getValue0() <= it.getValue()) {
-                for (int i = 0; i < wds; i++) {
+            if (rpt.size() <= lim || rpt.get(0).getValue0() <= it.getValue()) {
+                for (int i = 0; i < lim; i++) {
                     if (i == rpt.size()) {
                         rpt.add(new Pair<Integer, List<String>>(
                                 it.getValue(),
@@ -99,7 +100,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
                         break;
                     }
                 }
-                while (rpt.size() == wds) {
+                while (rpt.size() == lim) {
                     rpt.pop();
                 }
             }
