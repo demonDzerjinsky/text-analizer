@@ -51,7 +51,8 @@ public final class ReportTop {
      * @param reportParam входные параметры для построения отчета
      * @return отчет в контракте API
      */
-    Optional<ReportTopResultDto> execute(final ReportTopRequestDto reportParam) {
+    Optional<ReportTopResultDto> execute(
+            final ReportTopRequestDto reportParam) {
         return validator.validate(reportParam)
                 .flatMap(p -> reportBuilder.buildReport(p.srcDir(), p.nWords()))
                 .map(ReportTopResultDto::new);

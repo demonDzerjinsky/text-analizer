@@ -1,17 +1,23 @@
 package ru.ssp.executors;
 
 /**
+ * Утилитарный класс порождающих методов объектов классов
+ * реализующих {@code CustomExecutorService}
  * Фабричные методы под кастомные реализации пулов выполнения задачи
  * сбора статистики по словам.
  */
-public class CustomExecutors {
+public final class CustomExecutors {
+
+    private CustomExecutors() {
+    }
 
     /**
      * формирует пул с параметрами по умолчанию.
+     *
      * @return сервис сбора статистики слов
      */
     public static CustomExecutorService newDefaultExecutor() {
-        return new OneReaderManyConsumersExecutor.Builder().build();
+        return new CustomThreadPoolExecutor.Builder().build();
     }
 
     /**
@@ -24,7 +30,7 @@ public class CustomExecutors {
     public static CustomExecutorService newConfigurableExecutor(
             final int buffers,
             final int threads) {
-        return new OneReaderManyConsumersExecutor.Builder()
+        return new CustomThreadPoolExecutor.Builder()
                 .setBuffers(buffers)
                 .setThreads(threads)
                 .build();

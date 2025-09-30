@@ -30,18 +30,20 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
      */
     private final CustomExecutorService exctr;
 
-    ReportTopBuilderImpl(final DirectoryScanner scanner, final CustomExecutorService executor) {
+    ReportTopBuilderImpl(final DirectoryScanner scanner,
+            final CustomExecutorService executor) {
         this.scnr = scanner;
         this.exctr = executor;
     }
 
     @Override
-    public Optional<List<Pair<String, Integer>>> buildReport(String dir, int nWords) {
+    public Optional<List<Pair<String, Integer>>> buildReport(final String dir,
+            final int nWords) {
         return of(dir)
                 .map(scnr::scanDir)
                 // сбор статистики делегируем пулу потоков
-                .flatMap(exctr::submitAndWait)
-                // сводим - складываем поученные от потоков статистики
+                .map(exctr::submitAndWait)
+                // сводим - складываем полученные от потоков статистики
                 .flatMap(this::merge)
                 // выделяем top-слов из общей статистики
                 .flatMap(m -> this.getTop(m, nWords))
@@ -49,7 +51,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     }
 
     /**
-     * сливает результаты в один отчет.
+     * совмещает статистики по словам от потоков в единую статистику.
      *
      * @param wCounts коллекция объектов-отчетов из отработавших потоков
      * @return суммарная карта статистики слов
@@ -67,8 +69,8 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     /**
      * определяет top-N слов.
      * кастомный метод, снижаем вычислительную сложность - уходим от
-     * полной сортировки большой коллекции и определяем только нужные top-N
-     * элементы в один проход.
+     * полной сортировки большой карты статистики слов, определяем
+     * только нужные top-N элементы в один проход.
      *
      * @param mergedMap полная карта статистики всех слов
      * @param wds       количество TopN по скольки построить отчет

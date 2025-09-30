@@ -31,7 +31,7 @@ class TextFilesReader extends BaseReader {
     /**
      * признак окончания потока.
      */
-    public final static String EOS = "<EOS>";
+    public static final String EOS = "<EOS>";
 
     /**
      * сообщение ошибки чтения.
@@ -45,6 +45,9 @@ class TextFilesReader extends BaseReader {
 
             = "stream open error: {}";
 
+    /**
+     * сообщение в лог.
+     */
     private static final String READER_TERMINATED
 
             = "files reader thread is terminated";

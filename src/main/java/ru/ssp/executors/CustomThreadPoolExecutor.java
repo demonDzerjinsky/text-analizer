@@ -14,12 +14,13 @@ import ru.ssp.exceptions.CustomExecutorInterruptedException;
  * сбор статистики на пуле потоков обработки.
  */
 @Slf4j
-public class OneReaderManyConsumersExecutor implements CustomExecutorService {
+public final class CustomThreadPoolExecutor implements CustomExecutorService {
 
     /**
      * сообщение в лог.
      */
     private static final String MSG_START = "Start {} threads";
+
     /**
      * сообщение в лог.
      */
@@ -52,27 +53,52 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
      */
     private final int threads;
 
-    private OneReaderManyConsumersExecutor(final Builder builder) {
+    private CustomThreadPoolExecutor(final Builder builder) {
         this.buffers = builder.buffers;
         this.threads = builder.threads;
     }
 
-    public static class Builder {
+    public static final class Builder {
+
+        /**
+         * размер буффера в очереди обмена данными.
+         */
         private int buffers = DEFAULT_BUFFERS;
+
+        /**
+         * количество потоков сбора статистики.
+         */
         private int threads = DEFAULT_THREADS;
 
+        /**
+         * установка размера буффера обмена.
+         *
+         * @param b размер буффера обмера (int)
+         * @return объект класса {@code Builder}
+         */
         public Builder setBuffers(final int b) {
             this.buffers = b;
             return this;
         }
 
+        /**
+         * установка количества потоков сбора статистики.
+         *
+         * @param t количество потоков (int)
+         * @return объект класса {@code Builder}
+         */
         public Builder setThreads(final int t) {
             this.threads = t;
             return this;
         }
 
-        public OneReaderManyConsumersExecutor build() {
-            return new OneReaderManyConsumersExecutor(this);
+        /**
+         * порождает {@code CustomThreadPoolExecutor}.
+         *
+         * @return объект типа CustomThreadPoolExecutor
+         */
+        public CustomThreadPoolExecutor build() {
+            return new CustomThreadPoolExecutor(this);
         }
 
     }
@@ -91,15 +117,15 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
             final List<String> fileNames) {
         final var queue = new LinkedBlockingQueue<String>(buffers);
         final var latch = new CountDownLatch(threads);
-        final var producer = new RunnableTextFilesQueueProducer(fileNames, queue);
-        final var consumers = new RunnableQueueWordsCounter[threads];
-        final Thread tProducer = new Thread(producer);
+        final var prodcr = new RunnableTextFilesQueueProducer(fileNames, queue);
+        final var conss = new RunnableQueueWordsCounter[threads];
+        final Thread tProducer = new Thread(prodcr);
         final Thread[] tConsumers = new Thread[threads];
         // инициализируем и запускаем пул консьюмеров
         // консьюмеры встают в ожидании потока строк в queue
         for (int i = 0; i < threads; i++) {
-            consumers[i] = new RunnableQueueWordsCounter(queue, latch);
-            tConsumers[i] = new Thread(consumers[i]);
+            conss[i] = new RunnableQueueWordsCounter(queue, latch);
+            tConsumers[i] = new Thread(conss[i]);
             tConsumers[i].start();
         }
         // запускаем продьюсера - начинает писать текст в queue
@@ -108,7 +134,7 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
             tProducer.join();
         } catch (InterruptedException ie) {
             // если мы были прерваны кидаем сигнал останова продьюсеру
-            // чтобы он мог завершить IO и остановиться на том что успел вычитать
+            // чтобы мог завершить IO и остановиться на том что успел вычитать
             tProducer.interrupt();
             Thread.currentThread().interrupt();
         }
@@ -154,6 +180,6 @@ public class OneReaderManyConsumersExecutor implements CustomExecutorService {
                 throw new CustomExecutorInterruptedException();
             }
         }
-        return of(consumers);
+        return of(conss);
     }
 }

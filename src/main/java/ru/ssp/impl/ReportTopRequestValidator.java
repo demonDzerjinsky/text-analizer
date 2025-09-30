@@ -27,20 +27,19 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
      *         валидации
      */
     @Override
-    public Optional<ReportTopRequestDto> validate(final ReportTopRequestDto param) {
-        return Optional.of(param).filter(this::check);
+    public Optional<ReportTopRequestDto> validate(
+            final ReportTopRequestDto param) {
+        return Optional.of(param).filter(this::checkNot);
     }
 
-    private boolean check(final ReportTopRequestDto o) {
+    private boolean checkNot(final ReportTopRequestDto o) {
         // перечисление ошибочных кейсов
-        return (o == null
+        return !(o == null
                 || o.srcDir() == null
                 || o.srcDir().isBlank()
                 || o.nWords() <= 1
                 || o.nWords() > WLIMIT
-                || checkDirIsNotExists(o.srcDir()))
-                        ? false
-                        : true;
+                || checkDirIsNotExists(o.srcDir()));
     }
 
     /**

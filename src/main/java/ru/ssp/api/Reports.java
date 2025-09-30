@@ -12,6 +12,8 @@ import ru.ssp.impl.ReportTop;
  * в соответствии с задачей.
  */
 public final class Reports {
+    private Reports() {
+    }
 
     /**
      * выполняет поиск слов и формирует отчет.
@@ -19,7 +21,8 @@ public final class Reports {
      * @param requestDto параметры вызова с критериями поиска
      * @return отчет по результатам поиска {@code ReportTopResultDto}
      */
-    public Optional<ReportTopResultDto> reportTop(final ReportTopRequestDto requestDto) {
+    public static Optional<ReportTopResultDto> reportTop(
+            final ReportTopRequestDto requestDto) {
         return ReportTop.makeReport(requestDto);
     }
 }

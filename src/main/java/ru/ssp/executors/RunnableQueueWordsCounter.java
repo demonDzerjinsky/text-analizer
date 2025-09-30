@@ -73,7 +73,7 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
                     throw new EosReceivedException();
                 }
                 for (String word : dp.split(nextLine)) {
-                    wordCountMap.compute(word,
+                    this.getWordCountMap().compute(word,
                             (k, v) -> (v == null) ? new MutCounter() : v).inc();
                 }
             }

@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.Getter;
 import ru.ssp.exceptions.EosReceivedException;
 
 /**
@@ -17,7 +19,8 @@ public abstract class BaseWordsCounter {
     /**
      * хранит статистику слов.
      */
-    protected final Map<String, MutCounter> wordCountMap = new HashMap<>();
+    @Getter
+    private final Map<String, MutCounter> wordCountMap = new HashMap<>();
 
     /**
      * формирует срез финального отчета на потоке
