@@ -3,9 +3,12 @@ package ru.ssp.executors;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * читает все строки из текстовых файлов и публикует в очередь.
  */
+@Slf4j
 class TextFilesQueueProducer extends TextFilesReader
         implements QueueProducer {
 
@@ -28,6 +31,7 @@ class TextFilesQueueProducer extends TextFilesReader
         this.getAsStream().subscribe(txt -> {
             try {
                 queue.put(txt);
+                log.info("published: {}", txt); //todo remove
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }

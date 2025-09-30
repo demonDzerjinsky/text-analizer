@@ -1,6 +1,7 @@
 package ru.ssp.executors;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -85,7 +86,7 @@ class TextFilesReader extends BaseReader {
                 sink.next(line);
             });
         } finally {
-            log.debug(READER_TERMINATED);
+            log.info(READER_TERMINATED);
         }
     }
 
@@ -93,19 +94,21 @@ class TextFilesReader extends BaseReader {
         var lines = fileNames
                 .stream()
                 .flatMap(fl -> {
-                    try (var fr = new FileReader(fl);
-                            var br = new BufferedReader(fr);) {
+                    final FileReader fr;
+                    try {
+                        fr = new FileReader(fl);
+                        final BufferedReader br = new BufferedReader(fr);
                         return br.lines().onClose(() -> {
                             try {
                                 br.close();
+                                log.info("io stream closed"); //todo remove
                             } catch (IOException e) {
                                 log.error(IO_ERROR, e);
                                 throw new ProducerTerminatedException(e);
                             }
                         });
-                    } catch (Exception e) {
-                        log.error(OPEN_FILE_STREAM_ERROR, e);
-                        throw new ProducerTerminatedException(e);
+                    } catch (FileNotFoundException fnfe) {
+                        throw new ProducerTerminatedException(fnfe);
                     }
                 });
         return lines;

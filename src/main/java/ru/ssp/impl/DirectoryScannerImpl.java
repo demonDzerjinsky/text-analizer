@@ -30,7 +30,7 @@ class DirectoryScannerImpl implements DirectoryScanner {
                     .map(f -> f.toAbsolutePath().toString())
                     .collect(toList());
         } catch (IOException ex) {
-            log.debug(ex.getMessage(), ex);
+            log.info(ex.getMessage(), ex);
             throw new RuntimeException(ex.getMessage(), ex.getCause());
         }
     }

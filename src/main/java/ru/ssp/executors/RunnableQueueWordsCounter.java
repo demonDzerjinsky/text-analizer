@@ -53,10 +53,10 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
         try {
             this.countWords();
         } catch (EosReceivedException ex) {
-            log.debug(MSG_END_OF_STREAM);
+            log.info(MSG_END_OF_STREAM);
         } finally {
             latch.countDown();
-            log.debug(MSG_THREAD_TERMINATED);
+            log.info(MSG_THREAD_TERMINATED);
         }
     }
 
@@ -78,7 +78,7 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
                 }
             }
         } catch (InterruptedException ie) {
-            log.debug(MSG_THREAD_INTERRUPTED);
+            log.info(MSG_THREAD_INTERRUPTED);
             Thread.currentThread().interrupt();
         }
     }

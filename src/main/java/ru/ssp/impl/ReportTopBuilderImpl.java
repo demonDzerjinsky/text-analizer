@@ -1,9 +1,9 @@
 package ru.ssp.impl;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.of;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +85,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
                     if (i == rpt.size()) {
                         rpt.add(new Pair<Integer, List<String>>(
                                 it.getValue(),
-                                Arrays.asList(it.getKey())));
+                                new ArrayList<String>(asList(it.getKey()))));
                         break;
                     } else if (rpt.get(i).getValue0() == it.getValue()) {
                         rpt.get(i).getValue1().add(it.getKey());
@@ -93,7 +93,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
                     } else if (rpt.get(i).getValue0() > it.getValue()) {
                         rpt.add(i, new Pair<Integer, List<String>>(
                                 it.getValue(),
-                                Arrays.asList(it.getKey())));
+                                new ArrayList<String>(asList(it.getKey()))));
                         break;
                     }
                 }

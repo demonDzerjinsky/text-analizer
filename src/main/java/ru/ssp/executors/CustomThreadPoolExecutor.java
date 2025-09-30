@@ -168,7 +168,7 @@ public final class CustomThreadPoolExecutor implements CustomExecutorService {
         // ждем пока все консьюмеры вычитают оставшиеся строки
         // и последний end-of-stream и завершатся
         try {
-            latch.wait();
+            latch.await();
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new CustomExecutorInterruptedException();
