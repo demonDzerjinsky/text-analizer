@@ -12,7 +12,7 @@ public class FindTopIntegrationTest {
 
     @Test
     void checkFindTop() {
-        final var params = new ReportTopRequestDto("./resources/folder", 10);
+        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
         var result = Reports.reportTop(params);
         log.info("result = {}", result);
         assertTrue(true);

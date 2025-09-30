@@ -76,8 +76,8 @@ class TextFilesReader extends BaseReader {
      * @param sink {@code FluxSink}
      */
     private void readFiles(final FluxSink<String> sink) {
-        try (var lines = this.lines()) {
-            lines().forEach(line -> {
+        try (var lines = this.getLinesStream()) {
+            lines.forEach(line -> {
                 if (Thread.interrupted()) {
                     Thread.currentThread().interrupt();
                     throw new ProducerTerminatedException();
@@ -89,7 +89,7 @@ class TextFilesReader extends BaseReader {
         }
     }
 
-    private Stream<String> lines() {
+    private Stream<String> getLinesStream() {
         var lines = fileNames
                 .stream()
                 .flatMap(fl -> {

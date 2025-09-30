@@ -27,7 +27,7 @@ class DirectoryScannerImpl implements DirectoryScanner {
         final Path searchRoot = Paths.get(dirName);
         try (var fstream = Files.walk(searchRoot)) {
             return fstream.filter(f -> Files.isRegularFile(f))
-                    .map(f -> f.getFileName().toString())
+                    .map(f -> f.toAbsolutePath().toString())
                     .collect(toList());
         } catch (IOException ex) {
             log.debug(ex.getMessage(), ex);
