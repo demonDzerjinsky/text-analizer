@@ -1,6 +1,5 @@
 package ru.ssp.impl;
 
-import static java.util.Arrays.asList;
 import static java.util.Optional.of;
 
 import java.util.ArrayList;
@@ -81,30 +80,55 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
     Optional<List<Pair<Integer, List<String>>>> getTop(
             final Map<String, Integer> mergedMap, final int wds) {
         final LinkedList<Pair<Integer, List<String>>> rpt = new LinkedList<>();
-        final int lim = wds + 1;
-        mergedMap.entrySet().forEach(it -> {
-            if (rpt.size() <= lim || rpt.get(0).getValue0() <= it.getValue()) {
-                for (int i = 0; i < lim; i++) {
-                    if (i == rpt.size()) {
-                        rpt.add(new Pair<Integer, List<String>>(
-                                it.getValue(),
-                                new ArrayList<String>(asList(it.getKey()))));
-                        break;
-                    } else if (rpt.get(i).getValue0() == it.getValue()) {
-                        rpt.get(i).getValue1().add(it.getKey());
-                        break;
-                    } else if (rpt.get(i).getValue0() > it.getValue()) {
-                        rpt.add(i, new Pair<Integer, List<String>>(
-                                it.getValue(),
-                                new ArrayList<String>(asList(it.getKey()))));
-                        break;
-                    }
+        for (var it : mergedMap.entrySet()) {
+            final String word = it.getKey();
+            final Integer cnt = it.getValue();
+            if (rpt.size() == 0) {
+                rpt.addFirst(
+                        new Pair<Integer, List<String>>(
+                                cnt,
+                                new ArrayList<String>(List.of(word))));
+                continue;
+            }
+            if (cnt < rpt.get(0).getValue0()) {
+                if (rpt.size() >= wds) {
+                    continue;
                 }
-                while (rpt.size() == lim) {
-                    rpt.pop();
+                rpt.addFirst(
+                        new Pair<Integer, List<String>>(
+                                cnt,
+                                new ArrayList<String>(List.of(word))));
+                continue;
+            }
+            boolean found = false;
+            for (int i = 0; i < rpt.size(); i++) {
+                if (cnt == rpt.get(i).getValue0()) {
+                    rpt.get(i).getValue1().add(word);
+                    found = true;
+                    break;
+                }
+                if (cnt < rpt.get(i).getValue0()) {
+                    rpt.add(i, new Pair<Integer, List<String>>(
+                            cnt,
+                            new ArrayList<String>(List.of(word))));
+                    found = true;
+                    if (rpt.size() > wds) {
+                        rpt.removeFirst();
+                    }
+                    break;
                 }
             }
-        });
+            if (found) {
+                continue;
+            }
+            rpt.addLast(
+                    new Pair<Integer, List<String>>(
+                            cnt,
+                            new ArrayList<String>(List.of(word))));
+            if (rpt.size() > wds) {
+                rpt.removeFirst();
+            }
+        }
         return of(rpt);
     }
 
