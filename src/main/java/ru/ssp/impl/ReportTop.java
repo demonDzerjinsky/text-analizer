@@ -1,5 +1,7 @@
 package ru.ssp.impl;
 
+import static java.util.Optional.of;
+
 import java.util.Optional;
 
 import ru.ssp.dto.ReportTopRequestDto;
@@ -13,17 +15,17 @@ public final class ReportTop {
     /**
      * валидатор контракта вызова.
      */
-    private final Validator<ReportTopRequestDto> validator;
+    private final Validator<ReportTopRequestDto, ReportTopResultDto> validator;
 
     /**
      * построитель отчета.
      */
     private final ReportTopBuilder reportBuilder;
 
-    ReportTop(final Validator<ReportTopRequestDto> requestValidator,
-            final ReportTopBuilder reportTopBuilder) {
-        this.validator = requestValidator;
-        this.reportBuilder = reportTopBuilder;
+    ReportTop(final Validator<ReportTopRequestDto, ReportTopResultDto> vl,
+            final ReportTopBuilder rb) {
+        this.validator = vl;
+        this.reportBuilder = rb;
     }
 
     /**
@@ -34,7 +36,7 @@ public final class ReportTop {
      */
     public static Optional<ReportTopResultDto> makeReport(
             final ReportTopRequestDto reportParam) {
-        return createInstance().execute(reportParam);
+        return of(createInstance().execute(reportParam));
     }
 
     private static ReportTop createInstance() {
@@ -51,11 +53,11 @@ public final class ReportTop {
      * @param reportParam входные параметры для построения отчета
      * @return отчет в контракте API
      */
-    Optional<ReportTopResultDto> execute(
-            final ReportTopRequestDto reportParam) {
+    ReportTopResultDto execute(final ReportTopRequestDto reportParam) {
         return validator.validate(reportParam)
-                .flatMap(p -> reportBuilder.buildReport(p.srcDir(), p.nWords()))
-                .map(r -> new ReportTopResultDto(r, null));
+                .orElseGet(() -> reportBuilder
+                        .buildReport(reportParam.srcDir(), reportParam.nWords())
+                        .map(r -> new ReportTopResultDto(r, null))
+                        .orElseThrow());
     }
-
 }

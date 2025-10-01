@@ -1,16 +1,20 @@
 package ru.ssp.impl;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.ssp.dto.ReportTopRequestDto;
+import ru.ssp.dto.ReportTopResultDto;
 
 /**
  * Валидатор контракта {@code ReportTopRequestDto}.
  */
 @Slf4j
-class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
+class ReportTopRequestValidator
+        implements Validator<ReportTopRequestDto, ReportTopResultDto> {
 
     /**
      * ограничение по количеству слов.
@@ -21,39 +25,41 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
     /**
      * сообщение в лог по ошибке валидации.
      */
-    private static final String VALIDATION_ERR = "request validation err: {}";
+    private static final String VALID_ERR = "request validation err: %s";
 
     /**
      * проверка параметров входного контракта.
      *
      * @param param DTO входного контракта
-     * @return {@code Optional} с объектом входного контракта в случае успешной
-     *         валидации
+     * @return {@code Optional} empty - если ошибок во входном контракте не
+     *         найдено и контракт ответа с ошибкой если валидация не прошла.
      */
     @Override
-    public Optional<ReportTopRequestDto> validate(
+    public Optional<ReportTopResultDto> validate(
             final ReportTopRequestDto param) {
-        return Optional.of(param).filter(this::checkNot);
+        return Optional.of(param)
+                .filter(this::checkIfErr)
+                .map(p -> new ReportTopResultDto(null, format(VALID_ERR, p)));
     }
 
     /**
      * валидирует параметры вызова.
      * логирует сообщение с объектом параметра в сл если не прошла валидация.
      *
-     * @param o объект параметров вызова
-     * @return true - если нет ошибок, false - ошибки
+     * @param param объект параметров вызова
+     * @return true - если валидация не прошла.
      */
-    private boolean checkNot(final ReportTopRequestDto o) {
-        if (o == null
-                || o.srcDir() == null
-                || o.srcDir().isBlank()
-                || o.nWords() <= 1
-                || o.nWords() > WLIMIT
-                || checkDirIsNotExists(o.srcDir())) {
-            log.info(VALIDATION_ERR, o);
-            return false;
+    private boolean checkIfErr(final ReportTopRequestDto param) {
+        if (param == null
+                || param.srcDir() == null
+                || param.srcDir().isBlank()
+                || param.nWords() <= 1
+                || param.nWords() > WLIMIT
+                || checkDirIsNotExists(param.srcDir())) {
+            // todo в последствии развить - вернуть детали ошибки
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
