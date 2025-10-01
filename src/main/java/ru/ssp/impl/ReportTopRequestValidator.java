@@ -3,11 +3,13 @@ package ru.ssp.impl;
 import java.io.File;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ssp.dto.ReportTopRequestDto;
 
 /**
  * Валидатор контракта {@code ReportTopRequestDto}.
  */
+@Slf4j
 class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
 
     /**
@@ -17,10 +19,12 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
     private static final int WLIMIT = 10;
 
     /**
+     * сообщение в лог по ошибке валидации.
+     */
+    private static final String VALIDATION_ERR = "request validation err: {}";
+
+    /**
      * проверка параметров входного контракта.
-     *
-     * каталог задан и не пробелами и существует
-     * количество слов в отчете передано положительным и в пределах ограничений
      *
      * @param param DTO входного контракта
      * @return {@code Optional} с объектом входного контракта в случае успешной
@@ -32,14 +36,24 @@ class ReportTopRequestValidator implements Validator<ReportTopRequestDto> {
         return Optional.of(param).filter(this::checkNot);
     }
 
+    /**
+     * валидирует параметры вызова.
+     * логирует сообщение с объектом параметра в сл если не прошла валидация.
+     *
+     * @param o объект параметров вызова
+     * @return true - если нет ошибок, false - ошибки
+     */
     private boolean checkNot(final ReportTopRequestDto o) {
-        // перечисление ошибочных кейсов
-        return !(o == null
+        if (o == null
                 || o.srcDir() == null
                 || o.srcDir().isBlank()
                 || o.nWords() <= 1
                 || o.nWords() > WLIMIT
-                || checkDirIsNotExists(o.srcDir()));
+                || checkDirIsNotExists(o.srcDir())) {
+            log.info(VALIDATION_ERR, o);
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -102,7 +102,7 @@ class ReportTopBuilderImpl implements ReportTopBuilder {
             }
             boolean found = false;
             for (int i = 0; i < rpt.size(); i++) {
-                if (cnt == rpt.get(i).getValue0()) {
+                if (cnt.equals(rpt.get(i).getValue0())) {
                     rpt.get(i).getValue1().add(word);
                     found = true;
                     break;

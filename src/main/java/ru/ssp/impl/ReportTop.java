@@ -55,7 +55,7 @@ public final class ReportTop {
             final ReportTopRequestDto reportParam) {
         return validator.validate(reportParam)
                 .flatMap(p -> reportBuilder.buildReport(p.srcDir(), p.nWords()))
-                .map(ReportTopResultDto::new);
+                .map(r -> new ReportTopResultDto(r, null));
     }
 
 }

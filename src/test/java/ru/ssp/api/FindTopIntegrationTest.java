@@ -16,7 +16,6 @@ import ru.ssp.dto.ReportTopRequestDto;
 @Slf4j
 public class FindTopIntegrationTest {
 
-    @Disabled
     @Test
     void checkFindTopInOneFile() {
         final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
@@ -31,7 +30,7 @@ public class FindTopIntegrationTest {
     @Tag("report10")
     @Test
     void checkFindTopInManyFiles() {
-        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
+        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 11);
         var resultOpt = Reports.reportTop(params);
         log.info("result: {}", resultOpt);
         // assertThat(resultOpt).isPresent();
