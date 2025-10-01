@@ -12,22 +12,12 @@ import ru.ssp.dto.ReportTopRequestDto;
 @Slf4j
 public class FindTopIntegrationTest {
 
-    @Test
-    void checkFindTopInOneFile() {
-        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
-        final var params = new ReportTopRequestDto("resources/folder1", 3);
-        var resultOpt = Reports.reportTop(params);
-        assertThat(resultOpt).isPresent();
-        resultOpt.ifPresent(r -> assertThat(r.top()).containsExactlyInAnyOrder(
-                new Pair<String, Integer>("amet", 37),
-                new Pair<String, Integer>("quam", 38),
-                new Pair<String, Integer>("vitae", 43)));
-    }
 
     @Test
-    void checkFindTopInManyFiles() {
+    void checkTop10() {
         //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
-        final var params = new ReportTopRequestDto("resources/folder", 10);
+        final int nTops = 10; // количество "мест" в отчете по ТОП слов
+        final var params = new ReportTopRequestDto("resources/folder", nTops);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13)); //в тестовых данных три слова делят рейтинг с другими словами по этому попали в топ
@@ -51,4 +41,16 @@ public class FindTopIntegrationTest {
         log.info("result: {}", resultOpt);
     }
 
+    @Test
+    void checkFindTopWhenOneFileInDir() {
+        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
+        final int nTops = 3; // количество "мест" в отчете по ТОП слов
+        final var params = new ReportTopRequestDto("resources/folder1", 3);
+        var resultOpt = Reports.reportTop(params);
+        assertThat(resultOpt).isPresent();
+        resultOpt.ifPresent(r -> assertThat(r.top()).containsExactlyInAnyOrder(
+                new Pair<String, Integer>("amet", 37),
+                new Pair<String, Integer>("quam", 38),
+                new Pair<String, Integer>("vitae", 43)));
+    }
 }
