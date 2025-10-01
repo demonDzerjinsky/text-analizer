@@ -43,7 +43,8 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
     private final LinkedBlockingQueue<String> queue;
 
     RunnableQueueWordsCounter(final LinkedBlockingQueue<String> sourceQueue,
-            final CountDownLatch consumersLatch) {
+            final CountDownLatch consumersLatch, final int minLen) {
+        super(minLen);
         this.latch = consumersLatch;
         this.queue = sourceQueue;
     }
@@ -73,7 +74,7 @@ class RunnableQueueWordsCounter extends BaseWordsCounter implements Runnable {
                     throw new EosReceivedException();
                 }
                 for (String word : dp.split(nextLine.toLowerCase())) {
-                    if (word.length() <= MIN_WORD_LEN) {
+                    if (word.length() <= getMinWordLen()) {
                         continue;
                     }
                     this.getWordCountMap().compute(word,

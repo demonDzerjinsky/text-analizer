@@ -20,13 +20,23 @@ public abstract class BaseWordsCounter {
      * считаем за слово последовательность алф-цифр символов начиная
      * с такого количества символов.
      */
-    public static final int MIN_WORD_LEN = 3;
+    @Getter
+    private int minWordLen;
 
     /**
      * хранит статистику слов.
      */
     @Getter
     private final Map<String, MutCounter> wordCountMap = new HashMap<>();
+
+    /**
+     * конструктор.
+     *
+     * @param minLen минимальная длина слова
+     */
+    BaseWordsCounter(final int minLen) {
+        this.minWordLen = minLen;
+    }
 
     /**
      * формирует срез финального отчета на потоке

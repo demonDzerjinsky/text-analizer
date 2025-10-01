@@ -56,7 +56,9 @@ public final class ReportTop {
     ReportTopResultDto execute(final ReportTopRequestDto reportParam) {
         return validator.validate(reportParam)
                 .orElseGet(() -> reportBuilder
-                        .buildReport(reportParam.srcDir(), reportParam.nWords())
+                        .buildReport(reportParam.srcDir(),
+                                reportParam.nWords(),
+                                reportParam.minLen())
                         .map(r -> new ReportTopResultDto(r, null))
                         .orElseThrow());
     }

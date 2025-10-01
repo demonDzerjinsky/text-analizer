@@ -21,11 +21,12 @@ class ReportTopBuilderDelegate implements ReportTopBuilder,
      *
      * @param dir    каталог
      * @param nWords параметр количества слов
+     * @param minLen минимальная длина
      */
     @Override
     public Optional<List<Pair<String, Integer>>> buildReport(
-            final String dir, final int nWords) {
-        return create().buildReport(dir, nWords);
+            final String dir, final int nWords, final int minLen) {
+        return create().buildReport(dir, nWords, minLen);
     }
 
     /**

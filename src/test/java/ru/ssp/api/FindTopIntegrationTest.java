@@ -17,7 +17,7 @@ public class FindTopIntegrationTest {
     void checkTop10() {
         //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
         final int nTops = 10; // количество "мест" в отчете по ТОП слов
-        final var params = new ReportTopRequestDto("resources/folder", nTops);
+        final var params = new ReportTopRequestDto("resources/folder", nTops, 3);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13)); //в тестовых данных три слова делят рейтинг с другими словами по этому попали в топ
@@ -30,7 +30,7 @@ public class FindTopIntegrationTest {
         // 10)
         final int errWordsParam = 11;
         //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder",
-        final var params = new ReportTopRequestDto("resources/folder", errWordsParam);
+        final var params = new ReportTopRequestDto("resources/folder", errWordsParam, 3);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(result -> {
@@ -45,7 +45,7 @@ public class FindTopIntegrationTest {
     void checkFindTopWhenOneFileInDir() {
         //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
         final int nTops = 3; // количество "мест" в отчете по ТОП слов
-        final var params = new ReportTopRequestDto("resources/folder1", 3);
+        final var params = new ReportTopRequestDto("resources/folder1", nTops, 3);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(r -> assertThat(r.top()).containsExactlyInAnyOrder(

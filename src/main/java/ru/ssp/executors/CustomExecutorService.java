@@ -18,7 +18,8 @@ public interface CustomExecutorService {
      * результатов по каждому потоку.
      *
      * @param fileNames коллекция файлов
+     * @param minLen минимальная длина слова
      * @return коллекция результатов по каждому потоку
      */
-    List<BaseWordsCounter> submitAndWait(List<String> fileNames);
+    List<BaseWordsCounter> submitAndWait(List<String> fileNames, int minLen);
 }

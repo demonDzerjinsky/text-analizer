@@ -110,11 +110,12 @@ public final class CustomThreadPoolExecutor implements CustomExecutorService {
      * последующего мержа в общую статистику и выделения из нее TOP слов.
      *
      * @param fileNames коллекция имен файлов
+     * @param minLen минимальная длина слова
      * @return коллекция результатов подсчета статистике на каждом потоке
      */
     @Override
     public List<BaseWordsCounter> submitAndWait(
-            final List<String> fileNames) {
+            final List<String> fileNames, final int minLen) {
         final var queue = new LinkedBlockingQueue<String>(buffers);
         final var latch = new CountDownLatch(threads);
         final var prodcr = new RunnableTextFilesQueueProducer(fileNames, queue);
@@ -124,7 +125,7 @@ public final class CustomThreadPoolExecutor implements CustomExecutorService {
         // инициализируем и запускаем пул консьюмеров
         // консьюмеры встают в ожидании потока строк в queue
         for (int i = 0; i < threads; i++) {
-            conss[i] = new RunnableQueueWordsCounter(queue, latch);
+            conss[i] = new RunnableQueueWordsCounter(queue, latch, minLen);
             tConsumers[i] = new Thread(conss[i]);
             tConsumers[i].start();
         }
