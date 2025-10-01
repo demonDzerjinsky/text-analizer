@@ -2,10 +2,6 @@ package ru.ssp.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-import java.lang.reflect.Executable;
 
 import org.javatuples.Pair;
 import org.junit.jupiter.api.Test;
@@ -18,7 +14,8 @@ public class FindTopIntegrationTest {
 
     @Test
     void checkFindTopInOneFile() {
-        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
+        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
+        final var params = new ReportTopRequestDto("resources/folder1", 3);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(r -> assertThat(r.top()).containsExactlyInAnyOrder(
@@ -29,10 +26,11 @@ public class FindTopIntegrationTest {
 
     @Test
     void checkFindTopInManyFiles() {
-        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
+        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
+        final var params = new ReportTopRequestDto("resources/folder", 10);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
-        resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13));
+        resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13)); //в тестовых данных три слова делят рейтинг с другими словами по этому попали в топ
         log.info("result: {}", resultOpt);
     }
 
@@ -41,8 +39,8 @@ public class FindTopIntegrationTest {
         // на примере параметра количества слов в топ-отчете (ограничитель выставлен в
         // 10)
         final int errWordsParam = 11;
-        final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder",
-                errWordsParam);
+        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder",
+        final var params = new ReportTopRequestDto("resources/folder", errWordsParam);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
         resultOpt.ifPresent(result -> {
