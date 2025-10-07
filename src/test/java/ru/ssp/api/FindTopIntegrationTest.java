@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.javatuples.Pair;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +13,20 @@ import ru.ssp.dto.ReportTopRequestDto;
 @Slf4j
 public class FindTopIntegrationTest {
 
-
+    @Tag("main")
     @Test
     void checkTop10() {
-        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder", 10);
         final int nTops = 10; // количество "мест" в отчете по ТОП слов
-        final var params = new ReportTopRequestDto("resources/folder", nTops, 3);
+        final var params = new ReportTopRequestDto(
+                "resources/folder", // папка где будет обработка файлов
+                nTops, // сколько топ-самых используемых слов в отчете
+                3 // сколько потоков обработки текста
+        );
+        //вызов API
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
-        resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13)); //в тестовых данных три слова делят рейтинг с другими словами по этому попали в топ
+        resultOpt.ifPresent(r -> assertThat(r.top()).size().isEqualTo(13)); // в тестовых данных три слова делят рейтинг
+                                                                            // с другими словами по этому попали в топ
         log.info("result: {}", resultOpt);
     }
 
@@ -29,7 +35,8 @@ public class FindTopIntegrationTest {
         // на примере параметра количества слов в топ-отчете (ограничитель выставлен в
         // 10)
         final int errWordsParam = 11;
-        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder",
+        // final var params = new
+        // ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder",
         final var params = new ReportTopRequestDto("resources/folder", errWordsParam, 3);
         var resultOpt = Reports.reportTop(params);
         assertThat(resultOpt).isPresent();
@@ -43,7 +50,9 @@ public class FindTopIntegrationTest {
 
     @Test
     void checkFindTopWhenOneFileInDir() {
-        //final var params = new ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1", 3);
+        // final var params = new
+        // ReportTopRequestDto("/Users/dmitrijdzerjinsky/Work/text-analyzer/resources/folder1",
+        // 3);
         final int nTops = 3; // количество "мест" в отчете по ТОП слов
         final var params = new ReportTopRequestDto("resources/folder1", nTops, 3);
         var resultOpt = Reports.reportTop(params);
