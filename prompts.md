@@ -1,0 +1,1 @@
+Get classes from /Users/dmitry/Work/text-analizer/src/main analyze the provided Java classes. Generate a comprehensive UML class diagram using Mermaid.js syntax. Include all fields, methods (with visibility modifiers), and explicit relationships like inheritance (<|--), implementations (..|>), and associations. Provide only the raw Mermaid code block.
